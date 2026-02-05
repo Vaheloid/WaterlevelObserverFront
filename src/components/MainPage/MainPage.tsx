@@ -143,7 +143,7 @@ export default function MainPage() {
                     </Button>
                 </Flex>
                 <Box p={2} overflowY="auto" flex="1">
-                    <GetTopics />
+                <GetTopics />
                 </Box>
             </Box>
             )}
