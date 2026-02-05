@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Menu, X, BarChart3 } from "lucide-react";
 import Map from "../Map/Map";
-import GetTopics from "../GetTopics";
+import GetTopics from "../Topics/GetTopics";
 
 export default function MainPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);

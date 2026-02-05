@@ -4,7 +4,7 @@ import {
     Text, Button, HStack, Center, Separator, Grid
 } from '@chakra-ui/react';
 import { FiMapPin, FiHash, FiTrash2, FiActivity, FiTarget, FiDatabase } from 'react-icons/fi';
-import{ api } from '../utils/api'
+import{ api } from '../../utils/api'
 interface Topic {
     ID_Topic: number;
     Name_Topic: string;
