@@ -8,7 +8,7 @@ import {
     Button,
     Center,
     HStack,
-  type ButtonProps
+    type ButtonProps
 } from "@chakra-ui/react";
 import { Menu, X, BarChart3 } from "lucide-react";
 import Map from "../Map/Map";

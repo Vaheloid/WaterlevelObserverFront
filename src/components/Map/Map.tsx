@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { api } from '../../utils/api';
+// Импортируем нашу новую функцию и тип
+import { fetchTopicData, type TopicDataResponse } from '../../utils/api'; 
 import { useEffect, useState } from "react";
 import * as turf from "@turf/turf";
 import type { Feature, Polygon, MultiPolygon, GeoJsonProperties } from 'geojson';
@@ -16,19 +17,21 @@ export default function Map({ selectedTopicId }: MapProps) {
 
     useEffect(() => {
         const loadTopicData = async () => {
-        // Если ID не выбран, ничего не загружаем
-        if (!selectedTopicId) return;
+            // Если ID не выбран, ничего не загружаем
+            if (!selectedTopicId) return;
 
-        try {
-            // Подставляем динамический ID в запрос
-            const response = await api.get(`/topic_data?id_topic=${selectedTopicId}&limit=25`);
-            const rawCoordsString = response.data.Depression_AreaPoints?.[0];
-            console.log("Данные топика: ", response.data);
+            try {
+                // ВЫЗОВ ВЫНЕСЕННОЙ ФУНКЦИИ
+                const data: TopicDataResponse = await fetchTopicData(selectedTopicId);
+                
+                const rawCoordsString = data.Depression_AreaPoints?.[0];
+                console.log("Данные топика: ", data);
 
-            if (rawCoordsString) {
-                const allPoints: [number, number][] = JSON.parse(rawCoordsString);
+                if (rawCoordsString) {
+                    const allPoints: [number, number][] = JSON.parse(rawCoordsString);
 
-                // 1. Создаем точки
+                    // Геометрия (Turf)
+                    // 1. Создаем точки
                 const points = allPoints.map(p => turf.point([p[1], p[0]]));
                 const collection = turf.featureCollection(points);
                 // 2. Генерируем вогнутую оболочку (Concave)
@@ -46,30 +49,23 @@ export default function Map({ selectedTopicId }: MapProps) {
                     units: 'kilometers', 
                     steps: 256 // Чем больше шагов, тем плавнее закругление 64
                 });
-
                     // 5. Округляем координаты для чистоты
                     const finalResult = turf.truncate(buffered!, { precision: 6 }); // 6
                     setMergedGeoJSON(finalResult as Feature<Polygon | MultiPolygon>);
+                    }
+                } else {
+                    // Если данных для полигона нет, очищаем предыдущий
+                    setMergedGeoJSON(null);
                 }
-            } else {
-                // Если данных для полигона нет, очищаем предыдущий
+            } catch (err) {
+                console.error("Ошибка при обработке:", err);
                 setMergedGeoJSON(null);
-            }
-        } catch (err) {
-            console.error("Ошибка при обработке:", err);
-            setMergedGeoJSON(null);
-        }
-        };
-        const fetchData = async () => {
-            try {
-                await loadTopicData();
-            } catch (error) {
-                console.error("Failed to load data:", error);
             }
         };
 
-        fetchData();
-        const interval = setInterval(fetchData, 10000);
+        // Запуск загрузки
+        loadTopicData();
+        const interval = setInterval(loadTopicData, 10000);
 
         return () => clearInterval(interval);
         // Добавляем selectedTopicId в массив зависимостей, чтобы карта реагировала на смену топика
