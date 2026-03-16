@@ -15,15 +15,7 @@ import { useForm } from "react-hook-form"
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-
-interface FormValues {
-    login_user: string
-    password_user: string
-}
-
-interface LoginResponse {
-    user_id: number
-}
+import type { FormValues, LoginResponse } from "@/utils/types"
 
 export default function Login() {
     const navigate = useNavigate()
