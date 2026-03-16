@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { 
     Badge, Box, Flex, Heading, Spinner, VStack, 
-    Text, Button, HStack, Center, Separator, Grid
+    Text, Button, HStack, Center, Separator, Grid 
 } from '@chakra-ui/react';
 import { FiMapPin, FiHash, FiTrash2, FiActivity, FiTarget, FiDatabase } from 'react-icons/fi';
-import{ api } from '../../utils/api'
+import { api } from '../../utils/api';
+
 interface Topic {
     ID_Topic: number;
     Name_Topic: string;
@@ -15,18 +16,22 @@ interface Topic {
     AltitudeSensor_Topic: number;
 }
 
-export default function TopicsList() {
+// 1. Добавляем selectedTopicId в пропсы
+interface GetTopicsProps {
+    onTopicSelect: (id: number) => void;
+    selectedTopicId: number | null; // Теперь мы получаем это снаружи
+}
+
+export default function TopicsList({ onTopicSelect, selectedTopicId }: GetTopicsProps) {
     const [topics, setTopics] = useState<Topic[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    // Добавляем состояние для выбранного топика (опционально, для подсветки)
-    const [selectedId, setSelectedId] = useState<number | null>(null);
 
+    // 2. Локальный selectedId больше не нужен
 
-    // Функция-обработчик нажатия на топик
     const handleTopicClick = (topic: Topic) => {
-        setSelectedId(topic.ID_Topic);
+        // 3. Просто сообщаем родителю о выборе
+        onTopicSelect(topic.ID_Topic);
         console.log("Выбран топик:", topic.Name_Topic, "ID:", topic.ID_Topic);
-        // Здесь можно добавить навигацию или открытие модального окна
     };
 
     const loadData = async () => {
@@ -44,7 +49,7 @@ export default function TopicsList() {
     useEffect(() => {
         loadData();
         const interval = setInterval(() => loadData(), 10000);
-        return () => clearInterval(interval); // Очистка интервала при размонтировании
+        return () => clearInterval(interval);
     }, []);
 
     if (loading && topics.length === 0) {
@@ -74,21 +79,18 @@ export default function TopicsList() {
                         p={5}
                         bg="white"
                         borderRadius="2xl"
-                        borderWidth="1px" // Увеличил толщину для видимости выделения
-                        // Динамически меняем цвет границы, если топик выбран
-                        borderColor={selectedId === topic.ID_Topic ? "blue.400" : "gray.100"}
-                        boxShadow={selectedId === topic.ID_Topic ? "md" : "sm"}
-                        
-                        // Клик по карточке
+                        borderWidth="1px"
+                        // 4. Используем selectedTopicId из пропсов для стилизации
+                        borderColor={selectedTopicId === topic.ID_Topic ? "blue.400" : "gray.100"}
+                        boxShadow={selectedTopicId === topic.ID_Topic ? "md" : "sm"}
                         onClick={() => handleTopicClick(topic)}
-                        
-                        cursor="pointer" // Курсор-указатель для понимания кликабельности
+                        cursor="pointer"
                         _hover={{ 
                             shadow: "xl", 
                             transform: "translateY(-4px)",
                             borderColor: "blue.200" 
                         }}
-                        _active={{ transform: "scale(0.98)" }} // Эффект нажатия
+                        _active={{ transform: "scale(0.98)" }}
                         transition="all 0.2s cubic-bezier(.08,.52,.52,1)"
                         position="relative"
                     >
@@ -96,10 +98,11 @@ export default function TopicsList() {
                         <Flex justify="space-between" align="start" mb={4}>
                             <HStack gap={3}>
                                 <Center 
-                                    bg={selectedId === topic.ID_Topic ? "blue.500" : "blue.50"} 
+                                    // 5. И здесь тоже используем пропс
+                                    bg={selectedTopicId === topic.ID_Topic ? "blue.500" : "blue.50"} 
                                     boxSize="38px" 
                                     borderRadius="xl" 
-                                    color={selectedId === topic.ID_Topic ? "white" : "blue.600"}
+                                    color={selectedTopicId === topic.ID_Topic ? "white" : "blue.600"}
                                     transition="all 0.2s"
                                 >
                                     <FiActivity size="18px" />
@@ -144,7 +147,7 @@ export default function TopicsList() {
                                     Высота <br /> датчика
                                 </Text>
                                 <Text fontSize="sm" fontWeight="black" color="blue.600">
-                                    {topic.AltitudeSensor_Topic}
+                                    {topic.AltitudeSensor_Topic}м
                                 </Text>
                             </VStack>
 
@@ -170,7 +173,7 @@ export default function TopicsList() {
                             w="full"
                             borderRadius="xl"
                             onClick={(e) => {
-                                e.stopPropagation(); // Останавливает всплытие события к карточке
+                                e.stopPropagation();
                                 console.log('Delete', topic.ID_Topic);
                             }}
                             _hover={{ bg: "red.100", color: "red.600" }}

@@ -5,29 +5,37 @@ import { useEffect, useState } from "react";
 import * as turf from "@turf/turf";
 import type { Feature, Polygon, MultiPolygon, GeoJsonProperties } from 'geojson';
 
-export default function Map() {
+// Типизация пропсов
+interface MapProps {
+    selectedTopicId: number | null;
+}
+
+export default function Map({ selectedTopicId }: MapProps) {
     // Состояние для хранения объединенного GeoJSON объекта
     const [mergedGeoJSON, setMergedGeoJSON] = useState<Feature<Polygon | MultiPolygon, GeoJsonProperties> | null>(null);
 
-    const loadTopicData = async () => {
-    try {
-        const response = await api.get('/topic_data?id_topic=2&limit=25');
-        const rawCoordsString = response.data.Depression_AreaPoints?.[0];
-        console.log("Данные топика: ", response.data)
+    useEffect(() => {
+        const loadTopicData = async () => {
+        // Если ID не выбран, ничего не загружаем
+        if (!selectedTopicId) return;
 
-        if (rawCoordsString) {
-            const allPoints: [number, number][] = JSON.parse(rawCoordsString);
+        try {
+            // Подставляем динамический ID в запрос
+            const response = await api.get(`/topic_data?id_topic=${selectedTopicId}&limit=25`);
+            const rawCoordsString = response.data.Depression_AreaPoints?.[0];
+            console.log("Данные топика: ", response.data);
 
-            // 1. Создаем точки
-            const points = allPoints.map(p => turf.point([p[1], p[0]]));
-            const collection = turf.featureCollection(points);
+            if (rawCoordsString) {
+                const allPoints: [number, number][] = JSON.parse(rawCoordsString);
 
+                // 1. Создаем точки
+                const points = allPoints.map(p => turf.point([p[1], p[0]]));
+                const collection = turf.featureCollection(points);
+                // 2. Генерируем вогнутую оболочку (Concave)
+                const concaveHull = turf.concave(collection, { maxEdge: 0.3, units: 'kilometers' }); //0.5
 
-            // 2. Генерируем вогнутую оболочку (Concave)
-            const concaveHull = turf.concave(collection, { maxEdge: 0.3, units: 'kilometers' }); //0.5
-
-            if (concaveHull) {
-                // --- ЭТАП СГЛАЖИВАНИЯ ---
+                if (concaveHull) {
+                    // --- ЭТАП СГЛАЖИВАНИЯ ---
 
                 // 3. Упрощаем полигон, чтобы убрать лишние "зубцы"
                 const simplified = turf.simplify(concaveHull, { tolerance: 0.0001, highQuality: true }); //0.0001
@@ -39,36 +47,33 @@ export default function Map() {
                     steps: 256 // Чем больше шагов, тем плавнее закругление 64
                 });
 
-                // 5. Округляем координаты для чистоты
-                const finalResult = turf.truncate(buffered!, { precision: 6 }); // 6
-                
-                setMergedGeoJSON(finalResult as Feature<Polygon | MultiPolygon>);
+                    // 5. Округляем координаты для чистоты
+                    const finalResult = turf.truncate(buffered!, { precision: 6 }); // 6
+                    setMergedGeoJSON(finalResult as Feature<Polygon | MultiPolygon>);
+                }
+            } else {
+                // Если данных для полигона нет, очищаем предыдущий
+                setMergedGeoJSON(null);
             }
+        } catch (err) {
+            console.error("Ошибка при обработке:", err);
+            setMergedGeoJSON(null);
         }
-    } catch (err) {
-        console.error("Ошибка при обработке:", err);
-    }
-};
+        };
+        const fetchData = async () => {
+            try {
+                await loadTopicData();
+            } catch (error) {
+                console.error("Failed to load data:", error);
+            }
+        };
 
-    useEffect(() => {
-    // 1. Создаем функцию-обертку для асинхронного вызова
-    const fetchData = async () => {
-        try {
-            await loadTopicData();
-        } catch (error) {
-            console.error("Failed to load data:", error);
-        }
-    };
+        fetchData();
+        const interval = setInterval(fetchData, 10000);
 
-    // 2. Вызываем ее
-    fetchData();
-
-    // 3. Устанавливаем интервал
-    const interval = setInterval(fetchData, 10000);
-
-    // 4. Очистка при размонтировании
-    return () => clearInterval(interval);
-}, []);
+        return () => clearInterval(interval);
+        // Добавляем selectedTopicId в массив зависимостей, чтобы карта реагировала на смену топика
+    }, [selectedTopicId]);
 
     return (
         <MapContainer 
@@ -80,11 +85,10 @@ export default function Map() {
             scrollWheelZoom={true}
         >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
             {/* Отрисовка объединенного полигона */}
             {mergedGeoJSON && (
                 <GeoJSON 
-                    key={JSON.stringify(mergedGeoJSON)} // Ключ нужен для перерисовки при обновлении данных
+                    key={JSON.stringify(mergedGeoJSON)} 
                     data={mergedGeoJSON}
                     style={{
                         color: 'red',
