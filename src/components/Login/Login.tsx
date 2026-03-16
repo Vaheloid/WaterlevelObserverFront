@@ -1,4 +1,15 @@
-import { AbsoluteCenter, Alert, Box, Button, Field, Heading, Input, Stack } from "@chakra-ui/react"
+import { 
+  AbsoluteCenter, 
+  Alert, 
+  Box, 
+  Button, 
+  Center, 
+  Field, 
+  Heading, 
+  Input, 
+  Stack,
+  Text 
+} from "@chakra-ui/react"
 import { PasswordInput } from "@/components/ui/password-input"
 import { useForm } from "react-hook-form"
 import { useState } from 'react'
@@ -19,162 +30,139 @@ export default function Login() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [loginError, setLoginError] = useState<string | null>(null)
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>()
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm<FormValues>()
 
     const onSubmit = async (data: FormValues) => {
         setIsSubmitting(true)
         setLoginError(null)
-        try {
-            const response = await axios.post<LoginResponse>('/api/login', data, {
-                withCredentials: true,
-                headers: { 'Content-Type': 'application/json' },
-            })
-            console.log("User ID:", response.data.user_id)
 
+        try {
+            const response = await axios.post<LoginResponse>(
+                '/api/login',
+                data,
+                {
+                    withCredentials: true,
+                    headers: { 'Content-Type': 'application/json' },
+                }
+            )
+            console.log("User ID:", response.data.user_id)
             navigate('/main')
             reset()
         } catch {
             setLoginError('Неверный логин или пароль')
-            reset()
         } finally {
             setIsSubmitting(false)
         }
     }
 
     return (
+        // Фон в стиле "Bloom" (стандартные обои Windows 11)
         <Box 
+            bgGradient="radial(circle at 50% 50%, #4f79f2 0%, #1e3a8a 100%)" 
             w="100%" 
             h="100vh" 
-            position="relative" 
-            bg="#fdfdfd" // Светлая база
+            position="relative"
             overflow="hidden"
         >
-            {/* Группа фоновых "жидких" пятен */}
-            <Box position="absolute" inset="0" zIndex="0" filter="blur(70px)">
-                {/* Пятно 1: Основное синее */}
-                <Box 
-                    position="absolute"
-                    top="-5%"
-                    left="10%"
-                    w="45%"
-                    h="50%"
-                    bg="#93c5fd" // blue.300
-                    borderRadius="full"
-                    opacity="0.5"
-                />
-                {/* Пятно 2: Фиолетовый акцент */}
-                <Box 
-                    position="absolute"
-                    bottom="10%"
-                    right="5%"
-                    w="40%"
-                    h="55%"
-                    bg="#c4b5fd" // purple.300
-                    borderRadius="full"
-                    opacity="0.4"
-                />
-                {/* Пятно 3: Теплая розовая дымка */}
-                <Box 
-                    position="absolute"
-                    top="20%"
-                    right="15%"
-                    w="30%"
-                    h="30%"
-                    bg="#fda4af" // rose.300
-                    borderRadius="full"
-                    opacity="0.3"
-                />
-                {/* Пятно 4: Бирюзовый низ */}
-                <Box 
-                    position="absolute"
-                    bottom="-10%"
-                    left="20%"
-                    w="35%"
-                    h="40%"
-                    bg="#5eead4" // teal.300
-                    borderRadius="full"
-                    opacity="0.3"
-                />
-            </Box>
+            
 
-            <AbsoluteCenter axis="both" width={{ base: "95%", sm: "80%", md: "420px" }} style={{ zIndex: 2 }}>
+            <AbsoluteCenter axis="both" width={{ base: "95%", sm: "400px" }}>
                 <Box
                     w="100%"
-                    /* Glassmorphism эффект */
-                    backdropFilter="blur(30px) saturate(160%)"
-                    bg="rgba(255, 255, 255, 0.6)"
-                    border="1px solid rgba(255, 255, 255, 0.5)"
-                    borderRadius="3xl" // Более мягкие углы Windows 11
-                    boxShadow="0 25px 50px -12px rgba(0, 0, 0, 0.1)"
-                    px={{ base: "8", md: "10" }}
-                    py={{ base: "10", md: "12" }}
+                    // Эффект Mica/Acrylic
+                    bg="rgba(255, 255, 255, 0.7)"
+                    backdropFilter="blur(30px) saturate(150%)"
+                    borderRadius="xl" // Скругление в стиле Win11
+                    border="1px solid"
+                    borderColor="whiteAlpha.400"
+                    boxShadow="0 8px 32px 0 rgba(0, 0, 0, 0.2)"
+                    p={{ base: "6", md: "10" }}
                 >
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Heading
-                            textAlign="center"
-                            fontWeight="700"
-                            letterSpacing="-0.03em"
-                            mb="8"
-                            size="xl"
-                            color="gray.800"
-                        >
-                            Авторизация
-                        </Heading>
-                        
-                        <Stack gap="5">
-                            <Field.Root invalid={!!errors.login_user}>
-                                <Field.Label fontWeight="600" color="gray.700" fontSize="sm">ЛОГИН</Field.Label>
-                                <Input
-                                    {...register("login_user", { required: "Введите логин" })}
-                                    placeholder="Введите логин"
-                                    variant="subtle"
-                                    bg="rgba(255, 255, 255, 0.5)"
-                                    _focus={{ bg: "white", borderColor: "blue.400" }}
-                                    borderRadius="xl"
-                                    h="50px"
-                                />
-                                <Field.ErrorText>{errors.login_user?.message}</Field.ErrorText>
-                            </Field.Root>
-
-                            <Field.Root invalid={!!errors.password_user}>
-                                <Field.Label fontWeight="600" color="gray.700" fontSize="sm">ПАРОЛЬ</Field.Label>
-                                <PasswordInput
-                                    {...register("password_user", { required: "Введите пароль" })}
-                                    placeholder="Введите пароль"
-                                    variant="subtle"
-                                    bg="rgba(255, 255, 255, 0.5)"
-                                    _focus={{ bg: "white", borderColor: "blue.400" }}
-                                    borderRadius="xl"
-                                    h="50px"
-                                />
-                                <Field.ErrorText>{errors.password_user?.message}</Field.ErrorText>
-                            </Field.Root>
-
-                            <Button
-                                mt="4"
-                                bg="#0067c0" // Фирменный синий Windows
-                                color="white"
-                                type="submit"
-                                loading={isSubmitting}
-                                width="full"
-                                borderRadius="xl"
-                                h="50px"
-                                fontWeight="600"
-                                _hover={{ bg: "#005bb0", transform: "scale(1.01)" }}
-                                _active={{ transform: "scale(0.98)" }}
-                                transition="all 0.2s cubic-bezier(.4,0,.2,1)"
+                    <Stack gap="6">
+                        <Box textAlign="center">
+                            <Heading
+                                size="xl"
+                                fontWeight="semibold"
+                                letterSpacing="tight"
+                                color="gray.800"
                             >
-                                Войти
-                            </Button>
+                                Вход
+                            </Heading>
+                            <Text color="gray.600" fontSize="sm" mt="1">
+                                Используйте свою учетную запись
+                            </Text>
+                        </Box>
 
-                            {loginError && (
-                                <Alert.Root status="error" borderRadius="xl" variant="solid" bg="red.400">
-                                    <Alert.Indicator color="white" />
-                                    <Alert.Title fontSize="xs" color="white">{loginError}</Alert.Title>
-                                </Alert.Root>
-                            )}
-                        </Stack>
-                    </form>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <Stack gap="4">
+                                <Field.Root invalid={!!errors.login_user}>
+                                    <Field.Label fontWeight="medium">Логин</Field.Label>
+                                    <Input
+                                        {...register("login_user", { required: "Обязательное поле" })}
+                                        placeholder="Введите логин"
+                                        bg="whiteAlpha.600"
+                                        border="1px solid"
+                                        borderColor="blackAlpha.200"
+                                        _focus={{ 
+                                            borderColor: "#0067c0", // Фирменный синий Windows
+                                            boxShadow: "0 0 0 1px #0067c0" 
+                                        }}
+                                        borderRadius="md"
+                                    />
+                                    <Field.ErrorText>{errors.login_user?.message}</Field.ErrorText>
+                                </Field.Root>
+
+                                <Field.Root invalid={!!errors.password_user}>
+                                    <Field.Label fontWeight="medium">Пароль</Field.Label>
+                                    <PasswordInput
+                                        {...register("password_user", { required: "Обязательное поле" })}
+                                        placeholder="Введите пароль"
+                                        bg="whiteAlpha.600"
+                                        border="1px solid"
+                                        borderColor="blackAlpha.200"
+                                        _focus={{ borderColor: "#0067c0", boxShadow: "0 0 0 1px #0067c0" }}
+                                        borderRadius="md"
+                                    />
+                                    <Field.ErrorText>{errors.password_user?.message}</Field.ErrorText>
+                                </Field.Root>
+
+                                <Button
+                                    type="submit"
+                                    loading={isSubmitting}
+                                    width="full"
+                                    // Цвет Accent в Windows 11
+                                    bg="#0067c0"
+                                    color="white"
+                                    fontWeight="normal"
+                                    borderRadius="md"
+                                    _hover={{ bg: "#005da1", boxShadow: "md" }}
+                                    _active={{ bg: "#00528e", transform: "scale(0.98)" }}
+                                    transition="all 0.2s"
+                                    mt="2"
+                                >
+                                    Войти
+                                </Button>
+
+                                {loginError && (
+                                    <Alert.Root status="error" borderRadius="md" variant="subtle">
+                                        <Alert.Indicator />
+                                        <Alert.Title fontSize="xs">{loginError}</Alert.Title>
+                                    </Alert.Root>
+                                )}
+                            </Stack>
+                        </form>
+
+                        <Center>
+                            <Text fontSize="xs" color="gray.500">
+                                © 2026 П3 Солюшенс
+                            </Text>
+                        </Center>
+                    </Stack>
                 </Box>
             </AbsoluteCenter>
         </Box>
