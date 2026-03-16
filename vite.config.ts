@@ -9,6 +9,7 @@ export default defineConfig({
   proxy: {
     '/api': {
       target: 'https://109.195.147.171:443',
+      // новый target: 'https://waterlevel-naillin.duckdns.org/mqtt-api',
       // target: 'http://localhost:9515',
       changeOrigin: true,
       secure: false, // Игнорировать ошибки сертификата
