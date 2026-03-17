@@ -38,16 +38,16 @@ export default function Map({ selectedTopicId, topics }: MapProps) {
                     data={mergedGeoJSON}
                     style={{
                         color: 'red',
-                        fillColor: 'red',
+                        fillColor: '#ff6363',
                         fillOpacity: 0.25,
-                        weight: 1
+                        weight: 1.1
                     }}
                 />
             )}
 
             {/* Маркер */}
             {topics.map((topic) => (
-                <Marker position={[topic.Latitude_Topic, topic.Longitude_Topic]}>
+                <Marker key={topic.ID_Topic} position={[topic.Latitude_Topic, topic.Longitude_Topic]}>
                     <Popup>{topic.Name_Topic}</Popup>
                 </Marker>
                 
