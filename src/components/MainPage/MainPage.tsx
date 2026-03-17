@@ -1,155 +1,72 @@
-import { useState } from "react";
-import {
-    Box,
-    Flex,
-    Heading,
-    Text,
-    VStack,
-    Button,
-    Center,
-    HStack,
-    type ButtonProps
-} from "@chakra-ui/react";
-import { Menu, X, BarChart3 } from "lucide-react";
-import Map from "../Map/Map";
-import GetTopics from "../Topics/GetTopics";
-import { useTopics } from "@/hooks/useTopics";
+// MainPage.tsx
+import { useState } from "react"
+import { Flex, Box } from "@chakra-ui/react"
+import { PlusCircle } from "lucide-react"
+
+// Импорт ваших компонентов
+import Map from "../Map/Map"
+import { useTopics } from "@/hooks/useTopics"
+import { Sidebar } from "./Sidebar"
+import { TopicsPanel } from "../Topics/TopicsPanel"
+import { AddTopicForm } from "../Topics/AddTopicForm"
+import { FloatingPanel } from "../Topics/FloatingPanel"
 
 export default function MainPage() {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [showTopicsPanel, setShowTopicsPanel] = useState(false);
-    const { topics, loading } = useTopics();
-    // Новое состояние для хранения ID выбранного топика
-    const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [activePanel, setActivePanel] = useState<"topics" | "add" | null>(null)
+  const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
+  const { topics, loading } = useTopics()
 
-    const sidebarWidth = isSidebarOpen ? "280px" : "80px";
-    const panelLeftPosition = "10px";
-    const panelTopPosition = "10px";
-    const iconSize = 24;
+  const handlePanelToggle = (panel: "topics" | "add") => {
+    setActivePanel(activePanel === panel ? null : panel)
+  }
 
-    const commonTransition = "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+  return (
+    <Flex h="100vh" w="100vw" overflow="hidden" bg="gray.50">
+      
+      {/* 1. SIDEBAR (Боковая панель) */}
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        activePanel={activePanel}
+        onPanelToggle={handlePanelToggle}
+      />
 
-    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+      {/* 2. MAIN CONTENT (Карта и всплывающие панели) */}
+      <Flex direction="column" flex="1" position="relative">
+        
+        {/* Слой карты */}
+        <Box w="full" h="full" zIndex={1}>
+          <Map selectedTopicId={selectedTopicId} topics={topics} />
+        </Box>
 
-    const commonBtnProps: ButtonProps = {
-        variant: "ghost",
-        h: "48px",
-        w: "48px",
-        p: 0,
-        bg: "gray.100",
-        borderRadius: "md",
-        _hover: { bg: "gray.200" },
-        _active: { bg: "gray.300" },
-    };
+        {/* Панель СПИСКА топиков */}
+        {activePanel === "topics" && (
+          <TopicsPanel 
+            topics={topics}
+            loading={loading}
+            selectedTopicId={selectedTopicId}
+            onTopicSelect={setSelectedTopicId}
+            onClose={() => setActivePanel(null)}
+          />
+        )}
 
-    return (
-        <Flex h="100vh" w="100vw" overflow="hidden" bg="gray.50">
+        {/* Панель ДОБАВЛЕНИЯ топика */}
+        {activePanel === "add" && (
+          <FloatingPanel 
+            title="Добавление топика" 
+            icon={PlusCircle} 
+            onClose={() => setActivePanel(null)}
+          >
+            <AddTopicForm onSuccess={(data) => {
+              alert(`Топик "${data}" успешно создан!`)
+              setActivePanel(null) 
+              // Здесь можно добавить логику обновления списка topics
+            }} />
+          </FloatingPanel>
+        )}
 
-            {/* --- SIDEBAR --- */}
-            <Box
-                as="aside"
-                w={sidebarWidth}
-                bg="white"
-                borderRight="1px solid"
-                borderColor="gray.200"
-                transition={commonTransition}
-                zIndex={200}
-                h="full"
-                p={4}
-                position="relative"
-                style={{ willChange: "width" }}
-            >
-                <VStack align="center" gap={6}>
-                    {/* КНОПКА 1: БУРГЕР */}
-                    <Flex w="full" align="center" h="48px" justify={isSidebarOpen ? "space-between" : "center"}>
-                        {isSidebarOpen &&
-                            (
-                                <Heading size="sm" color="blue.600" ml={2} whiteSpace="nowrap">
-                                    НАВИГАЦИЯ
-                                </Heading>
-                            )}
-                        <Button
-                            {...commonBtnProps}
-                            w="48px"
-                            minW="48px"
-                            maxW="48px"
-                            onClick={toggleSidebar}
-                            aria-label="Toggle Sidebar"
-                            style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" }}
-                        >
-                            <Center w="48px" h="48px">
-                                {isSidebarOpen ? <X size={iconSize} /> : <Menu size={iconSize} />}
-                            </Center>
-                        </Button>
-                    </Flex>
-                    {/* КНОПКА 2: ТОПИКИ */}
-                    <Box w="full" display="flex" justifyContent="center">
-                        <Button
-                            {...commonBtnProps}
-                            w={isSidebarOpen ? "full" : "48px"}
-                            minW={isSidebarOpen ? "full" : "48px"}
-                            maxW={isSidebarOpen ? "full" : "48px"}
-                            onClick={() => setShowTopicsPanel(!showTopicsPanel)}
-                            color={showTopicsPanel ? "blue.600" : "gray.600"}
-                            justifyContent={isSidebarOpen ? "flex-start" : "center"}
-                            style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" }}
-                        >
-                            <Center minW="48px" h="48px">
-                                <BarChart3 size={iconSize} />
-                            </Center>
-                            {isSidebarOpen && (
-                                <Text fontWeight="bold" ml={1} whiteSpace="nowrap">
-                                    Топики
-                                </Text>
-                            )}
-                        </Button>
-                    </Box>
-                </VStack>
-            </Box>
-
-            {/* --- MAIN CONTENT (MAP) --- */}
-            <Flex direction="column" flex="1" position="relative">
-                <Box w="full" h="full" zIndex={1}>
-                    {/* Передаем выбранный ID в компонент карты */}
-                    <Map selectedTopicId={selectedTopicId} topics={topics}/>
-                </Box>
-
-                {showTopicsPanel && (
-                    <Box
-                        position="absolute"
-                        top={panelTopPosition}
-                        left={panelLeftPosition}
-                        w="400px"
-                        // Изменяем расчет высоты: 100vh - отступ сверху - 10px (промежуток снизу)
-                        maxH={`calc(100vh - ${panelTopPosition} - 10px)`}
-                        bg="rgba(255, 255, 255, 0.8)"
-                        backdropFilter="blur(10px)"
-                        borderRadius="xl"
-                        boxShadow="2xl"
-                        border="1px solid"
-                        borderColor="gray.200"
-                        zIndex={150}
-                        display="flex"
-                        flexDirection="column"
-                        // Добавляем margin-bottom для надежности визуального зазора
-                        mb="10px"
-                    >
-                        <Flex p={4} borderBottom="1px solid" borderColor="gray.100" align="center" justify="space-between">
-                            <HStack gap={2}>
-                                <BarChart3 size={18} color="var(--chakra-colors-blue-500)" />
-                                <Heading size="xs">ТОПИКИ</Heading>
-                            </HStack>
-                            <Button {...commonBtnProps} size="sm" onClick={() => setShowTopicsPanel(false)} p={0}>
-                                <X size={18} />
-                            </Button>
-                        </Flex>
-                        <Box p={2} overflowY="auto" flex="1">
-                            {/* Передаем функцию установки ID в компонент списка */}
-                            <GetTopics onTopicSelect={(id) => setSelectedTopicId(id)} selectedTopicId={selectedTopicId} topics={topics} loading={loading}/>
-                        </Box>
-                    </Box>
-                )}
-            </Flex>
-        </Flex>
-    );
+      </Flex>
+    </Flex>
+  )
 }
