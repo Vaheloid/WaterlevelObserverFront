@@ -1,56 +1,25 @@
-import { useEffect, useState } from 'react';
 import { 
     Badge, Box, Flex, Heading, Spinner, VStack, 
     Text, Button, HStack, Center, Separator, Grid 
 } from '@chakra-ui/react';
 import { FiMapPin, FiHash, FiTrash2, FiActivity, FiTarget, FiDatabase } from 'react-icons/fi';
-import { api } from '../../utils/api';
+import type { GetTopicsProps, Topic } from '@/utils/types';
 
-interface Topic {
-    ID_Topic: number;
-    Name_Topic: string;
-    Path_Topic: string; 
-    Latitude_Topic: number;
-    Longitude_Topic: number;
-    Altitude_Topic: number; 
-    AltitudeSensor_Topic: number;
-}
 
-// 1. Добавляем selectedTopicId в пропсы
-interface GetTopicsProps {
-    onTopicSelect: (id: number) => void;
-    selectedTopicId: number | null; // Теперь мы получаем это снаружи
-}
-
-export default function TopicsList({ onTopicSelect, selectedTopicId }: GetTopicsProps) {
-    const [topics, setTopics] = useState<Topic[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-
-    // 2. Локальный selectedId больше не нужен
+export default function TopicsList({ onTopicSelect, selectedTopicId, topics, loading }: GetTopicsProps) {
 
     const handleTopicClick = (topic: Topic) => {
-        // 3. Просто сообщаем родителю о выборе
-        onTopicSelect(topic.ID_Topic);
-        console.log("Выбран топик:", topic.Name_Topic, "ID:", topic.ID_Topic);
-    };
-
-    const loadData = async () => {
-        try {
-            const response = await api.get<Topic[]>('/topics');
-            setTopics(response.data);
-            console.log("Список топиков: ", response.data);
-        } catch (err) {
-            console.error("Ошибка загрузки:", err);
-        } finally {
-            setLoading(false);
+        // Проверяем: если мы нажали на уже выбранный топик
+        if (selectedTopicId === topic.ID_Topic) {
+            // Снимаем выделение (передаем null)
+            onTopicSelect(null);
+            console.log("Выделение снято");
+        } else {
+            // Иначе выбираем новый топик
+            onTopicSelect(topic.ID_Topic);
+            console.log("Выбран топик:", topic.Name_Topic, "ID:", topic.ID_Topic);
         }
     };
-
-    useEffect(() => {
-        loadData();
-        const interval = setInterval(() => loadData(), 10000);
-        return () => clearInterval(interval);
-    }, []);
 
     if (loading && topics.length === 0) {
         return (

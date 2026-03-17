@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { 
-    Box, 
-    Flex, 
-    Heading, 
-    Text, 
-    VStack, 
+import {
+    Box,
+    Flex,
+    Heading,
+    Text,
+    VStack,
     Button,
     Center,
     HStack,
@@ -13,15 +13,17 @@ import {
 import { Menu, X, BarChart3 } from "lucide-react";
 import Map from "../Map/Map";
 import GetTopics from "../Topics/GetTopics";
+import { useTopics } from "@/hooks/useTopics";
 
 export default function MainPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [showTopicsPanel, setShowTopicsPanel] = useState(false);
+    const { topics, loading } = useTopics();
     // Новое состояние для хранения ID выбранного топика
     const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
 
     const sidebarWidth = isSidebarOpen ? "280px" : "80px";
-    const panelLeftPosition = "10px"; 
+    const panelLeftPosition = "10px";
     const panelTopPosition = "10px";
     const iconSize = 24;
 
@@ -42,7 +44,7 @@ export default function MainPage() {
 
     return (
         <Flex h="100vh" w="100vw" overflow="hidden" bg="gray.50">
-            
+
             {/* --- SIDEBAR --- */}
             <Box
                 as="aside"
@@ -60,12 +62,12 @@ export default function MainPage() {
                 <VStack align="center" gap={6}>
                     {/* КНОПКА 1: БУРГЕР */}
                     <Flex w="full" align="center" h="48px" justify={isSidebarOpen ? "space-between" : "center"}>
-                        {isSidebarOpen && 
-                        (
-                            <Heading size="sm" color="blue.600" ml={2} whiteSpace="nowrap">
-                                НАВИГАЦИЯ
-                            </Heading>
-                        )}
+                        {isSidebarOpen &&
+                            (
+                                <Heading size="sm" color="blue.600" ml={2} whiteSpace="nowrap">
+                                    НАВИГАЦИЯ
+                                </Heading>
+                            )}
                         <Button
                             {...commonBtnProps}
                             w="48px"
@@ -109,20 +111,20 @@ export default function MainPage() {
             <Flex direction="column" flex="1" position="relative">
                 <Box w="full" h="full" zIndex={1}>
                     {/* Передаем выбранный ID в компонент карты */}
-                    <Map selectedTopicId={selectedTopicId} />
+                    <Map selectedTopicId={selectedTopicId} topics={topics}/>
                 </Box>
 
                 {showTopicsPanel && (
                     <Box
                         position="absolute"
                         top={panelTopPosition}
-                        left={panelLeftPosition} 
+                        left={panelLeftPosition}
                         w="400px"
                         // Изменяем расчет высоты: 100vh - отступ сверху - 10px (промежуток снизу)
-                        maxH={`calc(100vh - ${panelTopPosition} - 10px)`} 
+                        maxH={`calc(100vh - ${panelTopPosition} - 10px)`}
                         bg="rgba(255, 255, 255, 0.8)"
                         backdropFilter="blur(10px)"
-                        borderRadius="xl" 
+                        borderRadius="xl"
                         boxShadow="2xl"
                         border="1px solid"
                         borderColor="gray.200"
@@ -130,7 +132,7 @@ export default function MainPage() {
                         display="flex"
                         flexDirection="column"
                         // Добавляем margin-bottom для надежности визуального зазора
-                        mb="10px" 
+                        mb="10px"
                     >
                         <Flex p={4} borderBottom="1px solid" borderColor="gray.100" align="center" justify="space-between">
                             <HStack gap={2}>
@@ -143,7 +145,7 @@ export default function MainPage() {
                         </Flex>
                         <Box p={2} overflowY="auto" flex="1">
                             {/* Передаем функцию установки ID в компонент списка */}
-                            <GetTopics onTopicSelect={(id) => setSelectedTopicId(id) } selectedTopicId={selectedTopicId} />
+                            <GetTopics onTopicSelect={(id) => setSelectedTopicId(id)} selectedTopicId={selectedTopicId} topics={topics} loading={loading}/>
                         </Box>
                     </Box>
                 )}
