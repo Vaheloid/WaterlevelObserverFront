@@ -13,7 +13,7 @@ export const processCoordinatesToHull = (rawCoordsString: string): Feature<Polyg
         const collection = turf.featureCollection(points);
         
         // 2. Генерируем вогнутую оболочку
-        const concaveHull = turf.concave(collection, { maxEdge: 0.3, units: 'kilometers' });
+        const concaveHull = turf.concave(collection, { maxEdge: 0.2, units: 'kilometers' });
 
         if (!concaveHull) return null;
 
@@ -21,7 +21,7 @@ export const processCoordinatesToHull = (rawCoordsString: string): Feature<Polyg
         const simplified = turf.simplify(concaveHull, { tolerance: 0.0001, highQuality: true });
 
         // 4. Создание буфера для закругления углов
-        const buffered = turf.buffer(simplified, 0.1, { 
+        const buffered = turf.buffer(simplified, 0.05, { 
             units: 'kilometers', 
             steps: 256 
         });
