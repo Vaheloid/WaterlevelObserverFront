@@ -1,10 +1,17 @@
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
+import { Marker, Popup, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type { MapProps } from "@/utils/types";
 import { useTopicData } from "@/hooks/useTopicData"; // Наш новый хук
 import { RecenterMap } from "@/utils/mapUtils";
+import { lazy } from "react";
 
+const MapContainer = lazy(() =>
+  import("react-leaflet").then((module) => ({ default: module.MapContainer }))
+);
+const TileLayer = lazy(() =>
+  import("react-leaflet").then((module) => ({ default: module.TileLayer }))
+);
 
 export default function Map({ selectedTopicId, topics }: MapProps) {
     // 2. Получаем детальную геометрию для выбранного топика
@@ -19,7 +26,8 @@ export default function Map({ selectedTopicId, topics }: MapProps) {
             center={[54.735141, 55.958726]} 
             zoom={12}
             zoomControl={false} 
-            attributionControl={false} 
+            attributionControl={false}
+            preferCanvas={true}
         >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 

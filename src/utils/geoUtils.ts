@@ -23,7 +23,7 @@ export const processCoordinatesToHull = (rawCoordsString: string): Feature<Polyg
         // 4. Создание буфера для закругления углов
         const buffered = turf.buffer(simplified, 0.05, { 
             units: 'kilometers', 
-            steps: 256 
+            steps: 8 
         });
 
         // 5. Округляем координаты

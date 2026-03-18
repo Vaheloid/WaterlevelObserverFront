@@ -9,13 +9,10 @@ import type { GetTopicsProps, Topic } from '@/utils/types';
 export default function TopicsList({ onTopicSelect, selectedTopicId, topics, loading }: GetTopicsProps) {
 
     const handleTopicClick = (topic: Topic) => {
-        // Проверяем: если мы нажали на уже выбранный топик
         if (selectedTopicId === topic.ID_Topic) {
-            // Снимаем выделение (передаем null)
             onTopicSelect(null);
             console.log("Выделение снято");
         } else {
-            // Иначе выбираем новый топик
             onTopicSelect(topic.ID_Topic);
             console.log("Выбран топик:", topic.Name_Topic, "ID:", topic.ID_Topic);
         }
@@ -48,8 +45,7 @@ export default function TopicsList({ onTopicSelect, selectedTopicId, topics, loa
                         p={5}
                         bg="white"
                         borderRadius="2xl"
-                        borderWidth="1px"
-                        // 4. Используем selectedTopicId из пропсов для стилизации
+                        
                         borderColor={selectedTopicId === topic.ID_Topic ? "blue.400" : "gray.100"}
                         boxShadow={selectedTopicId === topic.ID_Topic ? "md" : "sm"}
                         onClick={() => handleTopicClick(topic)}
@@ -67,7 +63,6 @@ export default function TopicsList({ onTopicSelect, selectedTopicId, topics, loa
                         <Flex justify="space-between" align="start" mb={4}>
                             <HStack gap={3}>
                                 <Center 
-                                    // 5. И здесь тоже используем пропс
                                     bg={selectedTopicId === topic.ID_Topic ? "blue.500" : "blue.50"} 
                                     boxSize="38px" 
                                     borderRadius="xl" 

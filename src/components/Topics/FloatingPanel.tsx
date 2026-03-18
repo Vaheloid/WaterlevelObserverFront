@@ -3,14 +3,14 @@ import { Box, Flex, HStack, Heading, Button } from "@chakra-ui/react"
 import { X, type LucideIcon } from "lucide-react"
 
 interface FloatingPanelProps {
-  title: string
-  icon: LucideIcon
-  onClose: () => void
-  children: React.ReactNode
+    title: string
+    icon: LucideIcon
+    onClose: () => void
+    children: React.ReactNode
 }
-
+    
 export const FloatingPanel = ({ title, icon: Icon, onClose, children }: FloatingPanelProps) => (
-  <Box
+    <Box
     position="absolute"
     top="10px"
     left="10px"
@@ -25,16 +25,16 @@ export const FloatingPanel = ({ title, icon: Icon, onClose, children }: Floating
     zIndex={150}
     display="flex"
     flexDirection="column"
-  >
+    >
     <Flex p={4} borderBottom="1px solid" borderColor="gray.100" align="center" justify="space-between">
-      <HStack gap={2}>
+        <HStack gap={2}>
         <Icon size={18} color="blue.500" />
         <Heading size="xs">{title.toUpperCase()}</Heading>
-      </HStack>
-      <Button variant="ghost" size="sm" onClick={onClose}>
+        </HStack>
+        <Button variant="ghost" size="sm" onClick={onClose}>
         <X size={18} />
-      </Button>
+        </Button>
     </Flex>
     <Box p={4} overflowY="auto">{children}</Box>
-  </Box>
+    </Box>
 )
