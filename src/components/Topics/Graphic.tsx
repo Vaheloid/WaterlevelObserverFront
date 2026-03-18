@@ -105,8 +105,7 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen }: TopicChartPanelP
             {/* Контейнер графика */}
             <Box 
                 flex="1" 
-                m={2}
-                p={2}
+                p={4}
                 minH={0}
                 position="relative"
                 visibility={isCollapsed ? "hidden" : "visible"}

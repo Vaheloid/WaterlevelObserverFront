@@ -1,8 +1,6 @@
-// components/MainPage/AddTopicForm.tsx
 import { VStack, Input, Textarea, Button, Field, HStack } from "@chakra-ui/react"
 import { useForm } from "react-hook-form"
 
-// Используем твой интерфейс (исключая ID, так как его создаст бэкенд)
 export interface Topic {
     ID_Topic: number;
     Name_Topic: string;
@@ -13,12 +11,11 @@ export interface Topic {
     AltitudeSensor_Topic: number;
 }
 
-// Тип для создания (без ID)
 type CreateTopicInput = Omit<Topic, "ID_Topic">;
 
 interface AddTopicFormProps {
     onSuccess: (data: CreateTopicInput) => void;
-    initialCoords?: { lat: number; lng: number }; // Опционально: пропсы для координат с карты
+    initialCoords?: { lat: number; lng: number };
 }
 
 export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) => {
@@ -27,7 +24,6 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
         handleSubmit,
         formState: { errors, isSubmitting },
     } = useForm<CreateTopicInput>({
-        // Устанавливаем координаты по умолчанию, если они переданы
         defaultValues: {
             Latitude_Topic: initialCoords?.lat || 0,
             Longitude_Topic: initialCoords?.lng || 0,
@@ -38,7 +34,6 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
     })
 
     const onSubmit = (data: CreateTopicInput) => {
-        // Преобразуем строковые значения из инпутов в числа перед отправкой
         const formattedData = {
             ...data,
             Latitude_Topic: Number(data.Latitude_Topic),

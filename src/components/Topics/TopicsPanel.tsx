@@ -17,6 +17,7 @@ export const TopicsPanel = ({ onClose, onTopicSelect, selectedTopicId, topics, l
 		position="absolute"
 		top="10px"
 		left="10px"
+		bottom="10px"
 		w="400px"
 		maxH="calc(100vh - 20px)"
 		bg="rgba(255, 255, 255, 0.8)"

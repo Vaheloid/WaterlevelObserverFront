@@ -8,23 +8,23 @@ interface FloatingPanelProps {
     onClose: () => void
     children: React.ReactNode
 }
-    
+
 export const FloatingPanel = ({ title, icon: Icon, onClose, children }: FloatingPanelProps) => (
     <Box
-    position="absolute"
-    top="10px"
-    left="10px"
-    w="400px"
-    maxH="calc(100vh - 20px)"
-    bg="rgba(255, 255, 255, 0.8)"
-    backdropFilter="blur(10px)"
-    borderRadius="xl"
-    boxShadow="2xl"
-    border="1px solid"
-    borderColor="gray.200"
-    zIndex={150}
-    display="flex"
-    flexDirection="column"
+        position="absolute"
+        top="10px"
+        left="10px"
+        w="400px"
+        maxH="calc(100vh - 20px)"
+        bg="rgba(255, 255, 255, 0.8)"
+        backdropFilter="blur(10px)"
+        borderRadius="xl"
+        boxShadow="2xl"
+        border="1px solid"
+        borderColor="gray.200"
+        zIndex={150}
+        display="flex"
+        flexDirection="column"
     >
     <Flex p={4} borderBottom="1px solid" borderColor="gray.100" align="center" justify="space-between">
         <HStack gap={2}>
