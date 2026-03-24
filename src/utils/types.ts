@@ -29,6 +29,15 @@ export interface Topic {
     AltitudeSensor_Topic: number;
 }
 
+export interface TopicsPanelProps {
+    onClose: () => void
+    onTopicSelect: (id: number | null) => void
+    selectedTopicId: number | null
+    topics: Topic[]
+    loading: boolean
+    isSidebarOpen: boolean
+}
+
 // Структура ответа для детальных данных (полигона)
 export interface fetchTopicDataResponse {
     Depression_AreaPoints?: string[]; 

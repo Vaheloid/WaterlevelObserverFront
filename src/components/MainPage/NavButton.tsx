@@ -1,11 +1,10 @@
-// components/MainPage/NavButton.tsx
 import { Button, Center, Text, type ButtonProps } from "@chakra-ui/react"
 import { type ReactElement } from "react"
 
 interface NavButtonProps extends ButtonProps {
   icon: ReactElement
   label?: string
-  isExpanded: boolean // Развернута ли кнопка (текст виден?)
+  isExpanded: boolean
   isActive?: boolean
 }
 
@@ -15,7 +14,9 @@ export const NavButton = ({ icon, label, isExpanded, isActive, ...props }: NavBu
     h="48px"
     w={isExpanded ? "full" : "48px"}
     p={0}
-    bg={isActive ? "blue.50" : "gray.100"}
+    shadow="xs"
+    bg={isActive ? "blue.50" : "white"}
+    borderColor="rgba(255, 255, 255, 0.3)"
     color={isActive ? "blue.600" : "gray.600"}
     borderRadius="md"
     _hover={{ bg: "gray.200" }}

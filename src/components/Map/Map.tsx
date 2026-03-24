@@ -2,7 +2,7 @@ import { Marker, Popup, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type { MapProps } from "@/utils/types";
-import { useTopicData } from "@/hooks/useTopicData"; // Наш новый хук
+import { useTopicData } from "@/hooks/useTopicData";
 import { RecenterMap } from "@/utils/mapUtils";
 import { lazy } from "react";
 
@@ -14,10 +14,7 @@ const TileLayer = lazy(() =>
 );
 
 export default function Map({ selectedTopicId, topics }: MapProps) {
-    // 2. Получаем детальную геометрию для выбранного топика
     const { mergedGeoJSON } = useTopicData(selectedTopicId);
-    
-    // Находим информацию о выбранном топике из общего списка
     const currentTopicInfo = topics.find(t => t.ID_Topic === selectedTopicId);
 
     return (

@@ -15,7 +15,7 @@ export default function MainPage() {
     const [activePanel, setActivePanel] = useState<"topics" | "add" | null>(null)
     const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
     const [isChartVisible, setIsChartVisible] = useState(false)
-    const { topics, loading } = useTopics()
+    const { topics, loading } = useTopics(activePanel === "topics")
 
     const handlePanelToggle = (panel: "topics" | "add") => {
         setActivePanel(activePanel === panel ? null : panel)
@@ -32,11 +32,11 @@ export default function MainPage() {
 
     return (
         <Flex h="100vh" w="100vw" overflow="hidden" bg="gray.50">
-            <Sidebar 
-            isOpen={isSidebarOpen} 
-            onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-            activePanel={activePanel}
-            onPanelToggle={handlePanelToggle}
+            <Sidebar
+                isOpen={isSidebarOpen} 
+                onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+                activePanel={activePanel}
+                onPanelToggle={handlePanelToggle}
             />
 
             <Flex direction="column" flex="1" position="relative">
@@ -45,39 +45,39 @@ export default function MainPage() {
                 <Map selectedTopicId={selectedTopicId} topics={topics} />
             </Box>
 
-            {/* Панель списка (открывается/закрывается независимо) */}
             {activePanel === "topics" && (
                 <TopicsPanel 
-                topics={topics}
-                loading={loading}
-                selectedTopicId={selectedTopicId}
-                onTopicSelect={handleTopicSelect}
-                onClose={() => setActivePanel(null)}
+                    topics={topics}
+                    loading={loading}
+                    selectedTopicId={selectedTopicId}
+                    onTopicSelect={handleTopicSelect}
+                    onClose={() => setActivePanel(null)}
+                    isSidebarOpen={isSidebarOpen}
                 />
             )}
 
-            {/* ПАНЕЛЬ ГРАФИКА: показываем только если isChartVisible true */}
             {isChartVisible && selectedTopicData && (
                 <TopicChartPanel 
-                topic={selectedTopicData} 
-                isListOpen={activePanel === "topics"}
-                onClose={() => setIsChartVisible(false)}
+                    topic={selectedTopicData} 
+                    isListOpen={activePanel === "topics"}
+                    isSidebarOpen={isSidebarOpen}
+                    onClose={() => setIsChartVisible(false)}
                 />
             )}
 
             {activePanel === "add" && (
                 <FloatingPanel 
-                title="Добавление топика" 
-                icon={PlusCircle} 
-                onClose={() => setActivePanel(null)}
+                    title="Добавление топика" 
+                    icon={PlusCircle} 
+                    onClose={() => setActivePanel(null)}
+                    isSidebarOpen={isSidebarOpen} // Передаем состояние
                 >
-                <AddTopicForm onSuccess={(data) => {
-                    alert(`Топик "${data}" успешно создан!`)
-                    setActivePanel(null) 
-                }} />
+                    <AddTopicForm onSuccess={(data) => {
+                        alert(`Топик "${data}" успешно создан!`)
+                        setActivePanel(null) 
+                    }} />
                 </FloatingPanel>
             )}
-
             </Flex>
         </Flex>
     )

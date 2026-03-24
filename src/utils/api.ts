@@ -2,7 +2,7 @@ import axios from "axios";
 // Не забудь импортировать FormValues из типов
 import type { fetchTopicDataResponse, Topic, FormValues, LoginResponse } from "./types";
 
-export const api = axios.create({
+const api = axios.create({
     baseURL: '/api',
     withCredentials: true,
     headers: { "Content-Type": "application/json" }

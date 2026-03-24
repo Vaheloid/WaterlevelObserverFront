@@ -1,28 +1,35 @@
-import { useState, useEffect, useCallback } from 'react';
-import { fetchTopics } from '../utils/api';
+import { fetchTopics } from '@/utils/api';
 import type { Topic } from '@/utils/types';
+import { useState, useEffect, useCallback } from 'react';
 
-export function useTopics() {
+
+export const useTopics = (enabled: boolean = false) => {
     const [topics, setTopics] = useState<Topic[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState(false);
 
-    // Оборачиваем в useCallback, чтобы ссылку на функцию можно было передавать без лишних рендеров
-    const loadData = useCallback(async () => {
+    const loadData = useCallback(async (isInitial = false) => {
+        if (isInitial) setLoading(true);
         try {
             const data = await fetchTopics();
             setTopics(data);
-        } catch (err) {
-            console.error("Ошибка загрузки списка топиков:", err);
+        } catch (error) {
+            console.error("Ошибка при обновлении топиков:", error);
         } finally {
-            setLoading(false);
+            if (isInitial) setLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        loadData();
-        const interval = setInterval(loadData, 10000); // Обновление каждые 10 сек
-        return () => clearInterval(interval);
-    }, [loadData]);
+        if (!enabled) return;
+        loadData(true);
+        const intervalId = setInterval(() => {
+            loadData(false);
+        }, 10000);
 
-    return { topics, loading, refresh: loadData };
-}
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [enabled, loadData]);
+
+    return { topics, loading };
+};

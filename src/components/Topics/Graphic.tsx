@@ -10,22 +10,27 @@ interface TopicChartPanelProps {
     topic: Topic | null
     onClose: () => void
     isListOpen: boolean
+    isSidebarOpen: boolean
 }
 
-export const TopicChartPanel = ({ topic, onClose, isListOpen }: TopicChartPanelProps) => {
+export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
 
     const chart = useChart({
         data: [
-            { temp: -20, month: "January" }, { temp: -10, month: "February" },
-            { temp: 80, month: "March" }, { temp: 5, month: "April" },
-            { temp: 10, month: "May" }, { temp: 20, month: "June" },
-            { temp: 30, month: "July" }, { temp: 4, month: "August" },
-            { temp: 35, month: "September" }, { temp: 40, month: "October" },
-            { temp: -10, month: "November" }, { temp: -20, month: "December" },
+            { temp: -20, month: "Jan" }, { temp: -10, month: "Feb" },
+            { temp: 15, month: "Mar" }, { temp: 5, month: "Apr" },
+            { temp: 10, month: "May" }, { temp: 20, month: "Jun" },
+            { temp: 30, month: "Jul" }, { temp: 25, month: "Aug" },
+            { temp: 35, month: "Sep" }, { temp: 20, month: "Oct" },
+            { temp: -10, month: "Nov" }, { temp: -20, month: "Dec" },
         ],
         series: [{ name: "temp", color: "blue.500" }],
     })
+
+    const sidebarWidth = isSidebarOpen ? 280 : 80;
+    const listWidth = isListOpen ? 400 + 10 : 0;
+    const finalLeft = 10 + sidebarWidth + 10 + listWidth;
 
     if (!topic) return null
 
@@ -33,12 +38,11 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen }: TopicChartPanelP
         <Box
             position="absolute"
             bottom="10px"
-            left={isListOpen ? "420px" : "10px"}
+            left={`${finalLeft}px`}
             right="10px"
             height={isCollapsed ? "70px" : "250px"} 
-            bg="rgba(255, 255, 255, 0.8)"
+            bg="rgba(255, 255, 255, 0.7)"
             backdropFilter="blur(10px) saturate(180%)"
-            
             borderRadius="2xl"
             boxShadow="2xl"
             border="1px solid"
@@ -47,7 +51,7 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen }: TopicChartPanelP
             display="flex"
             flexDirection="column"
             overflow="hidden"
-            transition="height 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s ease, bg 0.3s ease"
+            transition="height 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
         >
             {/* Шапка */}
             <Flex 
@@ -62,7 +66,7 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen }: TopicChartPanelP
                         <FiTrendingUp size={16} />
                     </Center>
                     <VStack align="start" gap={0}>
-                        <Heading size="xs" textTransform="uppercase" color="gray.800">Данные уровня воды</Heading>
+                        <Heading size="xs" textTransform="uppercase" color="gray.800">Уровень воды</Heading>
                         <AnimatePresence>
                             {!isCollapsed && (
                                 <motion.div
@@ -84,11 +88,9 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen }: TopicChartPanelP
                         size="sm"
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         borderRadius="full"
-                        _hover={{ bg: "rgba(0, 0, 0, 0.05)" }}
                     >
                         {isCollapsed ? <FiMaximize2 size={16} /> : <FiMinus size={18} />}
                     </IconButton>
-
                     <IconButton
                         aria-label="Close"
                         variant="ghost"
@@ -106,49 +108,35 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen }: TopicChartPanelP
             <Box 
                 flex="1" 
                 p={4}
-                minH={0}
-                position="relative"
+                minH="200px"
                 visibility={isCollapsed ? "hidden" : "visible"}
-                bg="rgba(255, 255, 255, 0.8)"
+                bg="rgba(255, 255, 255, 0.7)"
                 backdropFilter="blur(10px) saturate(180%)"
-                borderRadius="xl"
                 opacity={isCollapsed ? 0 : 1}
-                transition="opacity 0.2s ease, transform 0.2s ease"
-                transform={isCollapsed ? "translateY(10px)" : "translateY(0)"}
+                transition="opacity 0.2s ease"
             >
-                <Chart.Root chart={chart} height="100%" width="100%">
-                    <ResponsiveContainer width="100%" height="100%">
+            {/* Рендерим график только если панель развернута */}
+            {!isCollapsed && (
+                <Chart.Root chart={chart} height="100%" width="100%" minWidth="100%" minHeight="100%">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={undefined} minHeight={undefined}>
                         <LineChart data={chart.data} margin={{ top: 5, right: 10, left: -5, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                             <XAxis 
                                 axisLine={false} 
                                 dataKey={chart.key("month")} 
                                 tickFormatter={(v) => v.slice(0, 3)} 
-                                stroke={chart.color("border")} 
+                                stroke="#A0AEC0" 
                             />
                             <YAxis 
                                 axisLine={false} 
                                 tickLine={false} 
                                 tickMargin={10} 
                                 dataKey={chart.key("temp")} 
-                                stroke={chart.color("border")} 
+                                stroke="#A0AEC0" 
                             />
-                            <Tooltip 
-                                animationDuration={100} 
-                                content={<Chart.Tooltip hideIndicator />} 
-                            />
-                            
-                            {/* Градиент для Area */}
-                            <defs>
-                                <linearGradient id="uv-gradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#3182ce" stopOpacity={0.3}/>
-                                    <stop offset="95%" stopColor="#3182ce" stopOpacity={0}/>
-                                </linearGradient>
-                            </defs>
-
-
+                            <Tooltip animationDuration={100} content={<Chart.Tooltip hideIndicator />} />
                             <Line
-                                isAnimationActive={false}
+                                isAnimationActive={false} // Отключаем внутреннюю анимацию Recharts для стабильности
                                 type="monotone"
                                 dataKey={chart.key("temp")}
                                 stroke="#3182ce"
@@ -159,6 +147,7 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen }: TopicChartPanelP
                         </LineChart>
                     </ResponsiveContainer>
                 </Chart.Root>
+            )}
             </Box>
         </Box>
     )

@@ -1,15 +1,6 @@
+import type { Topic } from "@/utils/types";
 import { VStack, Input, Textarea, Button, Field, HStack } from "@chakra-ui/react"
 import { useForm } from "react-hook-form"
-
-export interface Topic {
-    ID_Topic: number;
-    Name_Topic: string;
-    Path_Topic: string; 
-    Latitude_Topic: number;
-    Longitude_Topic: number;
-    Altitude_Topic: number; 
-    AltitudeSensor_Topic: number;
-}
 
 type CreateTopicInput = Omit<Topic, "ID_Topic">;
 
@@ -53,7 +44,7 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
                     <Field.Label>Название (Name_Topic)</Field.Label>
                     <Input 
                         {...register("Name_Topic", { required: "Введите название" })} 
-                        placeholder="Введите название объекта..." 
+                        placeholder="Введите название..." 
                         layerStyle="win11Input"
                     />
                     <Field.ErrorText>{errors.Name_Topic?.message}</Field.ErrorText>
@@ -61,10 +52,10 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
 
                 {/* Путь или описание */}
                 <Field.Root invalid={!!errors.Path_Topic}>
-                    <Field.Label>Путь/Описание (Path_Topic)</Field.Label>
+                    <Field.Label>Путь (Path_Topic)</Field.Label>
                     <Textarea 
                         {...register("Path_Topic")} 
-                        placeholder="Укажите путь или описание..." 
+                        placeholder="Укажите путь..." 
                         layerStyle="win11Input"
                         rows={2}
                     />
@@ -123,7 +114,7 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
                     loading={isSubmitting}
                     _hover={{ bg: "blue.700" }}
                 >
-                    Сохранить топик
+                    Добавить топик
                 </Button>
             </VStack>
         </form>
