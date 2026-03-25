@@ -2,10 +2,9 @@ import type { Topic } from "@/utils/types";
 import { VStack, Input, Textarea, Button, Field, HStack } from "@chakra-ui/react"
 import { useForm } from "react-hook-form"
 
-type CreateTopicInput = Omit<Topic, "ID_Topic">;
 
 interface AddTopicFormProps {
-    onSuccess: (data: CreateTopicInput) => void;
+    onSuccess: (data: Topic) => void;
     initialCoords?: { lat: number; lng: number };
 }
 
@@ -14,17 +13,17 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<CreateTopicInput>({
+    } = useForm<Topic>({
         defaultValues: {
             Latitude_Topic: initialCoords?.lat || 0,
             Longitude_Topic: initialCoords?.lng || 0,
-            Altitude_Topic: 0,
-            AltitudeSensor_Topic: 0,
+            Altitude_Topic: 87,
+            AltitudeSensor_Topic: 90,
             Path_Topic: ""
         }
     })
 
-    const onSubmit = (data: CreateTopicInput) => {
+    const onSubmit = (data: Topic) => {
         const formattedData = {
             ...data,
             Latitude_Topic: Number(data.Latitude_Topic),

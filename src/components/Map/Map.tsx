@@ -1,4 +1,4 @@
-import { Marker, Popup, GeoJSON } from "react-leaflet";
+import { Marker, Popup, GeoJSON, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type { MapProps } from "@/utils/types";
@@ -54,6 +54,9 @@ export default function Map({ selectedTopicId, topics }: MapProps) {
             {topics.map((topic) => (
                 <Marker key={topic.ID_Topic} position={[topic.Latitude_Topic, topic.Longitude_Topic]}>
                     <Popup>{topic.Name_Topic}</Popup>
+                    <Tooltip>
+                        {topic.Name_Topic}
+                    </Tooltip>
                 </Marker>
                 
             ))}

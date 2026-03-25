@@ -1,17 +1,13 @@
-import { Box, Flex, HStack, Heading, Button } from "@chakra-ui/react"
-import { X, type LucideIcon } from "lucide-react"
+import { Box, Flex, HStack, Heading, Button} from "@chakra-ui/react"
+import { Plus, X } from "lucide-react"
 
 interface FloatingPanelProps {
-    title: string
-    icon: LucideIcon
     onClose: () => void
     children: React.ReactNode
     isSidebarOpen: boolean
 }
 
-export const FloatingPanel = ({ 
-    title, 
-    icon: Icon, 
+export const FloatingPanel = ({  
     onClose, 
     children, 
     isSidebarOpen 
@@ -41,8 +37,8 @@ export const FloatingPanel = ({
             {/* Шапка панели */}
             <Flex p={4} borderBottom="1px solid" borderColor="gray.100" align="center" justify="space-between">
                 <HStack gap={2}>
-                    <Icon size={18} color="blue.500" />
-                    <Heading size="xs">{title.toUpperCase()}</Heading>
+                    <Plus size={18} color="var(--chakra-colors-blue-500)"/>
+                    <Heading size="xs">ДОБАВЛЕНИЕ ТОПИКА</Heading>
                 </HStack>
                 <Button variant="ghost" size="sm" onClick={onClose} p={0}>
                     <X size={18} />
@@ -50,7 +46,9 @@ export const FloatingPanel = ({
             </Flex>
 
             {/* Контентная часть (сама форма) */}
-            <Box 
+            <Box
+                bg="white"
+                borderBottomRadius="xl"
                 p={4} 
                 overflowY="auto" 
                 css={{

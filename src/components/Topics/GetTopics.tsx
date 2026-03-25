@@ -8,8 +8,7 @@ import {
 } from 'react-icons/fi';
 import type { GetTopicsProps, Topic } from '@/utils/types';
 
-export default function TopicsList({ onTopicSelect, selectedTopicId, topics, loading }: GetTopicsProps) {
-
+export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading }: GetTopicsProps) {
     const handleTopicClick = (topic: Topic) => {
         onTopicSelect(selectedTopicId === topic.ID_Topic ? null : topic.ID_Topic);
     };
@@ -29,7 +28,7 @@ export default function TopicsList({ onTopicSelect, selectedTopicId, topics, loa
                 <VStack align="stretch" gap={4}>
                     <Flex justify="space-between" align="center" mb={2} px={1}>
                         <HStack gap={4}>
-                            <Center bg="blue.600" p={2} borderRadius="md" color="white" shadow="0 2px 4px rgba(0,0,0,0.1)">
+                            <Center bg="blue.500" p={2} borderRadius="md" color="white" shadow="0 2px 4px rgba(0,0,0,0.1)">
                                 <FiDatabase size="18px" />
                             </Center>
                             <VStack align="start" gap={0}>
@@ -124,27 +123,50 @@ export default function TopicsList({ onTopicSelect, selectedTopicId, topics, loa
                                         border="1px solid" 
                                         borderColor="gray.200/40"
                                     >
-                                        <Text fontSize="xs" color="gray.600" fontFamily="Segoe UI, system-ui" opacity={0.8}>
+                                        <Text fontSize="sm" color="gray.600" fontFamily="Segoe UI, system-ui" opacity={0.8}>
                                             {topic.Path_Topic}
                                         </Text> 
                                     </Box>
 
-                                    <Grid templateColumns="1fr 1fr 1fr" gap={2} mb={4}>
-                                        <VStack align="start" gap={0}>
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Координаты</Text>
-                                            <Text fontSize="xs" fontWeight="600" color="gray.700">
+                                    <Grid templateColumns="1fr 1fr 1fr" gap={2} mb={4} justifyItems="center">
+                                        {/* Секция Координаты */}
+                                        <VStack align="center" gap={0}>
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
+                                                Координаты
+                                            </Text>
+                                            <Text fontSize="13px" fontWeight="600" color="gray.700" textAlign="center">
                                                 {topic.Latitude_Topic.toFixed(2)}°, {topic.Longitude_Topic.toFixed(2)}°
                                             </Text>
                                         </VStack>
-                                        <VStack align="start" gap={0} borderLeft="1px solid" borderColor="gray.200" pl={3}>
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Датчик</Text>
-                                            <Text fontSize="xs" fontWeight="600" color="blue.600">
+
+                                        {/* Секция Датчик */}
+                                        <VStack 
+                                            align="center" 
+                                            gap={0} 
+                                            borderLeft="1px solid" 
+                                            borderColor="gray.200" 
+                                            width="100%" 
+                                        >
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
+                                                Датчик
+                                            </Text>
+                                            <Text fontSize="13px" fontWeight="600" color="blue.600" textAlign="center">
                                                 {topic.AltitudeSensor_Topic} м
                                             </Text>
                                         </VStack>
-                                        <VStack align="start" gap={0} borderLeft="1px solid" borderColor="gray.200" pl={3}>
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Порог</Text>
-                                            <Text fontSize="xs" fontWeight="600" color="teal.600">
+
+                                        {/* Секция Порог */}
+                                        <VStack 
+                                            align="center" 
+                                            gap={0} 
+                                            borderLeft="1px solid" 
+                                            borderColor="gray.200" 
+                                            width="100%"
+                                        >
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
+                                                Порог
+                                            </Text>
+                                            <Text fontSize="13px" fontWeight="600" color="teal.600" textAlign="center">
                                                 {topic.Altitude_Topic} м
                                             </Text>
                                         </VStack>
@@ -158,16 +180,17 @@ export default function TopicsList({ onTopicSelect, selectedTopicId, topics, loa
                                         w="full"
                                         h="32px"
                                         borderRadius="md"
-                                        fontSize="xs"
+                                        fontSize="sm"
                                         color="gray.600"
                                         onClick={(e) => {
                                             e.stopPropagation();
+                                            onTopicDelete(topic.ID_Topic);
                                             console.log('Delete', topic.ID_Topic);
                                         }}
                                         _hover={{ bg: "red.50", color: "red.600" }}
                                     >
                                         <FiTrash2 style={{ marginRight: '6px' }} size="14px" /> 
-                                        Удалить устройство
+                                        Удалить топик
                                     </Button>
                                 </Box>
                             );

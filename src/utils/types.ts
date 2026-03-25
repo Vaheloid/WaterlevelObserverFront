@@ -1,5 +1,5 @@
 /**
- * Auth Types (Login.tsx)
+ * Auth Types
  */
 export interface FormValues {
     login_user: string;
@@ -32,35 +32,41 @@ export interface Topic {
 export interface TopicsPanelProps {
     onClose: () => void
     onTopicSelect: (id: number | null) => void
+    onTopicDelete: (id: number) => Promise<void> // Добавлено
     selectedTopicId: number | null
     topics: Topic[]
     loading: boolean
     isSidebarOpen: boolean
 }
 
-// Структура ответа для детальных данных (полигона)
+export interface TopicDataItem {
+    ID_Data: number;
+    Time_Data: number;
+    Value_Data: string;
+}
+
 export interface fetchTopicDataResponse {
-    Depression_AreaPoints?: string[]; 
+    Depression_AreaPoints?: string[];
+    Data: TopicDataItem[];
 }
 
 /**
- * Component Props (для реализации "единого источника данных")
+ * Component Props
  */
-
 export interface GetTopicsProps {
-    // Список топиков теперь приходит сверху
     topics: Topic[];
-    // Состояние загрузки тоже передаем, чтобы показать Spinner
     loading: boolean;
-    // ID может быть числом или null (если выбор снят)
     selectedTopicId: number | null;
-    // Функция уведомляет родителя об изменении ID
     onTopicSelect: (id: number | null) => void;
+    onTopicDelete: (id: number) => Promise<void>; // Добавлено
 }
 
 export interface MapProps {
-    // Карте нужен ID для загрузки полигона
     selectedTopicId: number | null;
-    // И список всех топиков для отрисовки маркеров и поиска координат
     topics: Topic[];
+}
+
+export interface TopicDeleteProps {
+    onTopicDelete: (id: number) => Promise<void>;
+    message: string;
 }

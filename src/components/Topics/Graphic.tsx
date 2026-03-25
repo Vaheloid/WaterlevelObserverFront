@@ -3,8 +3,9 @@ import { Box, Flex, HStack, Heading, Text, Center, VStack, IconButton } from "@c
 import { FiTrendingUp, FiX, FiMinus, FiMaximize2 } from "react-icons/fi"
 import type { Topic } from "@/utils/types"
 import { Chart, useChart } from "@chakra-ui/charts"
-import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, Legend } from "recharts"
 import { motion, AnimatePresence } from "framer-motion"
+import { useTopicData } from "@/hooks/useTopicData"
 
 interface TopicChartPanelProps {
     topic: Topic | null
@@ -16,23 +17,36 @@ interface TopicChartPanelProps {
 export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
 
+    const { chartData } = useTopicData(topic?.ID_Topic || null);
+
     const chart = useChart({
-        data: [
-            { temp: -20, month: "Jan" }, { temp: -10, month: "Feb" },
-            { temp: 15, month: "Mar" }, { temp: 5, month: "Apr" },
-            { temp: 10, month: "May" }, { temp: 20, month: "Jun" },
-            { temp: 30, month: "Jul" }, { temp: 25, month: "Aug" },
-            { temp: 35, month: "Sep" }, { temp: 20, month: "Oct" },
-            { temp: -10, month: "Nov" }, { temp: -20, month: "Dec" },
+        data: chartData,
+        series: [
+            { name: "value", label: "Фактическое значение", color: "#2B6CB0" },
+            { name: "ema", label: "Средняя скользящая", color: "#38A169" },
         ],
-        series: [{ name: "temp", color: "blue.500" }],
-    })
+    });
 
     const sidebarWidth = isSidebarOpen ? 280 : 80;
     const listWidth = isListOpen ? 400 + 10 : 0;
     const finalLeft = 10 + sidebarWidth + 10 + listWidth;
 
     if (!topic) return null
+    
+    const values = chartData
+        .map(d => d.value)
+        .filter((v): v is number => v !== null);
+
+    const rawMin = values.length > 0 ? Math.min(...values) : 0;
+    const rawMax = values.length > 0 ? Math.max(...values) : 120;
+
+    const roundedMin = Math.floor((rawMin - 5) / 5) * 5;
+    const roundedMax = Math.ceil((rawMax + 15) / 5) * 5;
+
+    const customTicks = [];
+    for (let i = roundedMin; i <= roundedMax; i += 5) {
+        customTicks.push(i);
+    }
 
     return (
         <Box
@@ -40,7 +54,7 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: T
             bottom="10px"
             left={`${finalLeft}px`}
             right="10px"
-            height={isCollapsed ? "70px" : "250px"} 
+            height={isCollapsed ? "70px" : "350px"} 
             bg="rgba(255, 255, 255, 0.7)"
             backdropFilter="blur(10px) saturate(180%)"
             borderRadius="2xl"
@@ -53,7 +67,6 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: T
             overflow="hidden"
             transition="height 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
         >
-            {/* Шапка */}
             <Flex 
                 p={4} 
                 align="center" 
@@ -83,6 +96,8 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: T
 
                 <HStack gap={1}>
                     <IconButton
+                        bg="white"
+                        shadow="xs"
                         aria-label="Collapse"
                         variant="ghost"
                         size="sm"
@@ -92,6 +107,8 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: T
                         {isCollapsed ? <FiMaximize2 size={16} /> : <FiMinus size={18} />}
                     </IconButton>
                     <IconButton
+                        bg="white"
+                        shadow="xs"
                         aria-label="Close"
                         variant="ghost"
                         size="sm"
@@ -104,48 +121,69 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: T
                 </HStack>
             </Flex>
 
-            {/* Контейнер графика */}
             <Box 
                 flex="1" 
                 p={4}
                 minH="200px"
+                position="relative" 
                 visibility={isCollapsed ? "hidden" : "visible"}
-                bg="rgba(255, 255, 255, 0.7)"
-                backdropFilter="blur(10px) saturate(180%)"
                 opacity={isCollapsed ? 0 : 1}
                 transition="opacity 0.2s ease"
+                bg="white"
             >
-            {/* Рендерим график только если панель развернута */}
             {!isCollapsed && (
-                <Chart.Root chart={chart} height="100%" width="100%" minWidth="100%" minHeight="100%">
-                    <ResponsiveContainer width="100%" height="100%" minWidth={undefined} minHeight={undefined}>
-                        <LineChart data={chart.data} margin={{ top: 5, right: 10, left: -5, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                            <XAxis 
-                                axisLine={false} 
-                                dataKey={chart.key("month")} 
-                                tickFormatter={(v) => v.slice(0, 3)} 
-                                stroke="#A0AEC0" 
-                            />
-                            <YAxis 
-                                axisLine={false} 
-                                tickLine={false} 
-                                tickMargin={10} 
-                                dataKey={chart.key("temp")} 
-                                stroke="#A0AEC0" 
-                            />
-                            <Tooltip animationDuration={100} content={<Chart.Tooltip hideIndicator />} />
-                            <Line
-                                isAnimationActive={false} // Отключаем внутреннюю анимацию Recharts для стабильности
-                                type="monotone"
-                                dataKey={chart.key("temp")}
-                                stroke="#3182ce"
-                                strokeWidth={3}
-                                dot={{ r: 4, fill: "#3182ce", strokeWidth: 2, stroke: "white" }}
-                                activeDot={{ r: 6, fill: "#3182ce", strokeWidth: 2, stroke: "white" }}
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
+                <Chart.Root chart={chart} height="100%" width="100%">
+                    <LineChart data={chart.data} responsive margin={{ top: 0, right: 10, left: 25, bottom: 20 }}>
+                        <CartesianGrid strokeDasharray="4 4" stroke="#e6e6e6" />
+                        <XAxis
+                            axisLine={false}
+                            dataKey="time" 
+                            tick={{ fontSize: 10 }}
+                            angle={-30}
+                            textAnchor="end"
+                            height={50} 
+                            stroke="#A0AEC0" 
+                        />
+                        <YAxis 
+                            axisLine={false} 
+                            tickLine={false} 
+                            tickMargin={10} 
+                            stroke="#A0AEC0"
+                            allowDataOverflow={false} 
+                            domain={[roundedMin, roundedMax]} 
+                            ticks={customTicks}
+                        />
+                        <Tooltip animationDuration={100} content={<Chart.Tooltip />} />
+                        <Legend
+                            verticalAlign="top"
+                            align="center"
+                            content={<Chart.Legend interaction="hover"/>}
+                        />
+                        
+                        <Line
+                            name="Фактическое значение"
+                            isAnimationActive={true}
+                            type="natural"
+                            dataKey="value"
+                            stroke="#2B6CB0"
+                            strokeWidth={2}
+                            dot={{ r: 3 }}
+                            activeDot={{ r: 5 }}
+                            opacity={chart.getSeriesOpacity("value")}
+                        />
+                        <Line
+                            name="Средняя скользящая"
+                            isAnimationActive={true}
+                            type="natural"
+                            dataKey="ema"
+                            stroke="#38A169"
+                            strokeDasharray="5 5"
+                            strokeWidth={2}
+                            dot={false}
+                            activeDot={{ r: 5 }}
+                            opacity={chart.getSeriesOpacity("ema")}
+                        />
+                    </LineChart>
                 </Chart.Root>
             )}
             </Box>

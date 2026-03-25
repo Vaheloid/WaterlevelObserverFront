@@ -1,5 +1,5 @@
 import { Box, VStack, Flex, Heading } from "@chakra-ui/react";
-import { Menu, X, BarChart3, PlusCircle } from "lucide-react";
+import { Menu, X, BarChart3, Plus } from "lucide-react";
 import { NavButton } from "./NavButton";
 
 interface SidebarProps {
@@ -65,7 +65,7 @@ export const Sidebar = ({
                         onClick={() => onPanelToggle("topics")}
                     />
                     <NavButton
-                        icon={<PlusCircle size={24} />}
+                        icon={<Plus size={24} />}
                         label="Добавить топик"
                         isExpanded={isOpen}
                         isActive={activePanel === "add"}

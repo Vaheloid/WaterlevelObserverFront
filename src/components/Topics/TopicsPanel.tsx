@@ -6,6 +6,7 @@ import type { TopicsPanelProps } from "@/utils/types";
 export const TopicsPanel = ({ 
     onClose, 
     onTopicSelect, 
+    onTopicDelete, 
     selectedTopicId, 
     topics, 
     loading,
@@ -17,17 +18,13 @@ export const TopicsPanel = ({
     return (
         <Box
             position="absolute"
-            top="10px"
-            bottom="10px"
+            top="10px" bottom="10px"
             left={`${currentLeft}px`}
             w="400px"
-            maxH="calc(100vh - 20px)"
             bg="rgba(255, 255, 255, 0.7)"
             backdropFilter="blur(10px)"
             borderRadius="xl"
             boxShadow="2xl"
-            border="1px solid"
-            borderColor="rgba(255, 255, 255, 0.3)"
             zIndex={150}
             display="flex"
             flexDirection="column"
@@ -42,15 +39,10 @@ export const TopicsPanel = ({
                     <X size={18} />
                 </Button>
             </Flex>
-            <Box p={2} 
-                css={{
-                    '&::-webkit-scrollbar': { display: 'none' },
-                    msOverflowStyle: 'none',
-                    scrollbarWidth: 'none',
-                }}
-                overflowY="auto" flex="1">
+            <Box p={2} overflowY="auto" flex="1">
                 <GetTopics 
                     onTopicSelect={onTopicSelect} 
+                    onTopicDelete={onTopicDelete} 
                     selectedTopicId={selectedTopicId} 
                     topics={topics} 
                     loading={loading} 
