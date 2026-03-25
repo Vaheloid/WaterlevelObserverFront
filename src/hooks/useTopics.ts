@@ -31,5 +31,5 @@ export const useTopics = (enabled: boolean = false) => {
         };
     }, [enabled, loadData]);
 
-    return { topics, loading };
+    return { topics, loading, loadData };
 };

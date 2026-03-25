@@ -16,7 +16,7 @@ export default function MainPage() {
     const [activePanel, setActivePanel] = useState<"topics" | "add" | null>(null)
     const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
     const [isChartVisible, setIsChartVisible] = useState(false)
-    const { topics, loading } = useTopics(activePanel === "topics")
+    const { topics, loading, loadData } = useTopics(activePanel === "topics")
 
     const handlePanelToggle = (panel: "topics" | "add") => {
         setActivePanel(activePanel === panel ? null : panel)
@@ -35,6 +35,9 @@ export default function MainPage() {
     const handleTopicDelete = async (id: number) => {
         try {
             const response = await deleteTopic(id);
+            // 2. СРАЗУ вызываем обновление данных из хука
+            // Это заставит список обновиться не дожидаясь интервала
+            await loadData();
             console.log(response.message); 
             console.log(`Топик удален: ${id}`);
             
