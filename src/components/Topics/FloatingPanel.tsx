@@ -22,7 +22,6 @@ export const FloatingPanel = ({
             left={`${currentLeft}px`}
             w="400px"
             maxH="calc(100vh - 20px)"
-            
             bg="rgba(255, 255, 255, 0.7)"
             backdropFilter="blur(10px) saturate(180%)"
             borderRadius="xl"
@@ -46,7 +45,7 @@ export const FloatingPanel = ({
 
             {/* Контентная часть (сама форма) */}
             <Box
-                bg="white"
+                bg="rgba(255, 255, 255, 0.8)"
                 borderBottomRadius="xl"
                 p={4} 
                 overflowY="auto" 

@@ -128,7 +128,7 @@ export const TopicChartPanel = ({ topic, chartData, onClose, isListOpen, isSideb
                 visibility={isCollapsed ? "hidden" : "visible"}
                 opacity={isCollapsed ? 0 : 1}
                 transition="opacity 0.2s ease"
-                bg="white"
+                bg="rgba(255, 255, 255, 0.8)"
             >
             {!isCollapsed && (
                 <Chart.Root chart={chart} height="100%" width="100%">

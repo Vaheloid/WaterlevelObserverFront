@@ -20,8 +20,8 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
         defaultValues: {
             Latitude_Topic: initialCoords?.lat || 0,
             Longitude_Topic: initialCoords?.lng || 0,
-            Altitude_Topic: 87,
-            AltitudeSensor_Topic: 90,
+            Altitude_Topic: 60,
+            AltitudeSensor_Topic: 60,
             Path_Topic: ""
         }
     })
@@ -104,7 +104,12 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
                         <Field.Label>Высота активации</Field.Label>
                         <Input 
                             type="number" 
-                            {...register("Altitude_Topic")} 
+                            {...register("Altitude_Topic")}
+                            onWheel={(e) => {
+                                const step = 1;
+                                const current = Number(e.currentTarget.value);
+                                setValue("Altitude_Topic", e.deltaY < 0 ? current + step : current - step);
+                            }}
                         />
                     </Field.Root>
 
@@ -112,7 +117,12 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
                         <Field.Label>Высота датчика</Field.Label>
                         <Input 
                             type="number" 
-                            {...register("AltitudeSensor_Topic")} 
+                            {...register("AltitudeSensor_Topic")}
+                            onWheel={(e) => {
+                                const step = 1;
+                                const current = Number(e.currentTarget.value);
+                                setValue("AltitudeSensor_Topic", e.deltaY < 0 ? current + step : current - step);
+                            }} 
                         />
                     </Field.Root>
                 </HStack>
