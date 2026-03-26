@@ -1,3 +1,4 @@
+import type { Feature, Polygon, MultiPolygon, GeoJsonProperties } from 'geojson';
 /**
  * Auth Types
  */
@@ -66,7 +67,8 @@ export interface MapProps {
     selectedTopicId: number | null;
     topics: Topic[];
     onMapClick?: (lat: number, lng: number) => void;
-    isAdding?: boolean; // Чтобы клик работал только когда открыта форма
+    isAdding?: boolean;
+    mergedGeoJSON: Feature<Polygon | MultiPolygon, GeoJsonProperties> | null;
 }
 
 export interface TopicDeleteProps {

@@ -1,4 +1,3 @@
-// components/Login/LoginLayout.tsx
 import { Box, AbsoluteCenter } from "@chakra-ui/react"
 import { type ReactNode } from "react"
 

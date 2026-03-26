@@ -23,7 +23,6 @@ export const fetchTopicData = async (id: number, limit: number = 25): Promise<fe
 };
 
 export const addTopic = async (topic: Topic): Promise<{ message: string }> => {
-    // Маппим данные из интерфейса Topic в формат, который ожидает бэкенд
     const payload = {
         name_topic: topic.Name_Topic,
         path_topic: topic.Path_Topic,

@@ -12,7 +12,7 @@ export default function Login() {
 	const navigate = useNavigate()
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [loginError, setLoginError] = useState<string | null>(null)
-	const { reset } = useForm<FormValues>() // Для очистки, если нужно
+	const { reset } = useForm<FormValues>()
 
 	const handleLogin = async (data: FormValues) => {
 		setIsSubmitting(true)

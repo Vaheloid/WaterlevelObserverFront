@@ -35,7 +35,7 @@ export const TopicsPanel = ({
                     <BarChart3 size={18} color="var(--chakra-colors-blue-500)" />
                     <Heading size="xs">ТОПИКИ</Heading>
                 </HStack>
-                <Button variant="ghost" size="sm" onClick={onClose} p={0}>
+                <Button variant="ghost" shadow="xs" size="sm" onClick={onClose} p={0}>
                     <X size={18} />
                 </Button>
             </Flex>

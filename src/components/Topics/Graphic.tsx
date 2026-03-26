@@ -5,19 +5,18 @@ import type { Topic } from "@/utils/types"
 import { Chart, useChart } from "@chakra-ui/charts"
 import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, Legend } from "recharts"
 import { motion, AnimatePresence } from "framer-motion"
-import { useTopicData } from "@/hooks/useTopicData"
+import { type ChartDataNode } from "@/hooks/useTopicData"
 
 interface TopicChartPanelProps {
     topic: Topic | null
+    chartData: ChartDataNode[];
     onClose: () => void
     isListOpen: boolean
     isSidebarOpen: boolean
 }
 
-export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
+export const TopicChartPanel = ({ topic, chartData, onClose, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
-
-    const { chartData } = useTopicData(topic?.ID_Topic || null);
 
     const chart = useChart({
         data: chartData,

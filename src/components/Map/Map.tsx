@@ -2,7 +2,6 @@ import { Marker, Popup, GeoJSON, Tooltip, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type { MapProps } from "@/utils/types";
-import { useTopicData } from "@/hooks/useTopicData";
 import { RecenterMap } from "@/utils/mapUtils";
 import { lazy } from "react";
 
@@ -13,7 +12,6 @@ const TileLayer = lazy(() =>
   import("react-leaflet").then((module) => ({ default: module.TileLayer }))
 );
 
-// Вспомогательный компонент для прослушивания кликов
 function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
     useMapEvents({
         click(e) {
@@ -25,8 +23,7 @@ function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number
 
 
 
-export default function Map({ selectedTopicId, topics, onMapClick, isAdding }: MapProps) {
-    const { mergedGeoJSON } = useTopicData(selectedTopicId);
+export default function Map({ selectedTopicId, topics, onMapClick, isAdding, mergedGeoJSON }: MapProps) {
     const currentTopicInfo = topics.find(t => t.ID_Topic === selectedTopicId);
 
     return (

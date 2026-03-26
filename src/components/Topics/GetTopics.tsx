@@ -30,14 +30,14 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                 <FiDatabase size="18px" />
                             </Center>
                             <VStack align="start" gap={0}>
-                                <Heading size="md" fontWeight="600" letterSpacing="-0.01em">
+                                <Heading size="sm" fontWeight="500" letterSpacing="-0.01em">
                                     Управление топиками
                                 </Heading>
                             </VStack>
                         </HStack>
                         <Badge 
                             variant="subtle" 
-                            bg="gray.200/50" 
+                            bg="white/50" 
                             color="gray.700" 
                             borderRadius="full" 
                             px={3} 
@@ -139,7 +139,7 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                             </Text>
                                         </VStack>
 
-                                        {/* Секция Порог */}
+                                        {/* Секция Высота активации */}
                                         <VStack 
                                             align="center" 
                                             gap={0} 
@@ -156,7 +156,7 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                             </Text>
                                         </VStack>
 
-                                        {/* Секция Датчик */}
+                                        {/* Секция Высота датчика */}
                                         <VStack 
                                             align="center" 
                                             gap={0} 

@@ -14,7 +14,7 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
     const {
         register,
         handleSubmit,
-        setValue, // Извлекаем setValue для программного обновления полей
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm<Topic>({
         defaultValues: {
@@ -26,7 +26,6 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
         }
     })
 
-    // 2. Следим за изменением initialCoords и обновляем поля формы
     useEffect(() => {
         if (initialCoords) {
             setValue("Latitude_Topic", initialCoords.lat);
@@ -44,14 +43,11 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
             AltitudeSensor_Topic: Number(data.AltitudeSensor_Topic),
         };
 
-        // 1. Отправляем запрос
         const response = await addTopic(formattedData);
-        
-        // 2. Логируем и уведомляем об успехе (как в success в jQuery)
+
         console.log(response.message);
         console.log(`Топик добавлен: ${formattedData.Name_Topic}`);
-        
-        // 3. Вызываем callback родителя, если нужно обновить список на карте/странице
+
         onSuccess(formattedData);
         
     } catch {

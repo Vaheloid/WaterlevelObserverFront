@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Flex, Box } from "@chakra-ui/react"
-import axios from "axios" // Для проверки ошибок
+import axios from "axios"
 
 import Map from "@/components/Map/Map"
 import { useTopics } from "@/hooks/useTopics"
@@ -10,6 +10,7 @@ import { AddTopicForm } from "@/components/Topics/AddTopicForm"
 import { FloatingPanel } from "@/components/Topics/FloatingPanel"
 import { TopicChartPanel } from "@/components/Topics/Graphic"
 import { deleteTopic } from "@/utils/api"
+import { useTopicData } from "@/hooks/useTopicData"
 
 export default function MainPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -18,6 +19,7 @@ export default function MainPage() {
     const [isChartVisible, setIsChartVisible] = useState(false)
     const [clickedCoords, setClickedCoords] = useState<{lat: number, lng: number} | null>(null);
     const { topics, loading, loadData } = useTopics(activePanel === "topics")
+    const { chartData, mergedGeoJSON, } = useTopicData(selectedTopicId);
 
     const handleMapClick = (lat: number, lng: number) => {
         if (activePanel === "add") {
@@ -28,7 +30,6 @@ export default function MainPage() {
         }
     };
 
-    // Очищаем координаты при закрытии панели
     const handlePanelToggle = (panel: "topics" | "add") => {
         if (activePanel === panel) {
             setActivePanel(null);
@@ -51,8 +52,6 @@ export default function MainPage() {
     const handleTopicDelete = async (id: number) => {
         try {
             const response = await deleteTopic(id);
-            // 2. СРАЗУ вызываем обновление данных из хука
-            // Это заставит список обновиться не дожидаясь интервала
             await loadData();
             console.log(response.message); 
             console.log(`Топик удален: ${id}`);
@@ -96,8 +95,12 @@ export default function MainPage() {
 
             <Flex direction="column" flex="1" position="relative">
                 <Box w="full" h="full" zIndex={1}>
-                    <Map selectedTopicId={selectedTopicId} topics={topics} onMapClick={handleMapClick} // Передаем обработчик
-                        isAdding={activePanel === "add"} // Флаг режима
+                    <Map 
+                        selectedTopicId={selectedTopicId} 
+                        topics={topics} 
+                        onMapClick={handleMapClick}
+                        isAdding={activePanel === "add"}
+                        mergedGeoJSON={mergedGeoJSON}
                     />
                 </Box>
 
@@ -116,6 +119,7 @@ export default function MainPage() {
                 {isChartVisible && selectedTopicData && (
                     <TopicChartPanel 
                         topic={selectedTopicData} 
+                        chartData={chartData}
                         isListOpen={activePanel === "topics"}
                         isSidebarOpen={isSidebarOpen}
                         onClose={() => setIsChartVisible(false)}
@@ -134,9 +138,9 @@ export default function MainPage() {
                             onSuccess={() => {
                                 setActivePanel(null);
                                 setClickedCoords(null);
-                                loadData(); // Не забываем обновить список
+                                loadData();
                             }} 
-                            initialCoords={clickedCoords || undefined} // Передаем координаты
+                            initialCoords={clickedCoords || undefined}
                         />
                     </FloatingPanel>
                 )}

@@ -1,4 +1,3 @@
-// components/Login/LoginForm.tsx
 import { Stack, Field, Input, Button, Alert } from "@chakra-ui/react"
 import { PasswordInput } from "@/components/ui/password-input"
 import { useForm } from "react-hook-form"
@@ -7,7 +6,6 @@ import type { FormValues, LoginFormProps } from "@/utils/types"
 export const LoginForm = ({ onSubmit, isSubmitting, loginError }: LoginFormProps) => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>()
 
-  // Общие стили для полей ввода в стиле Win11
     const inputStyles = {
         bg: "whiteAlpha.600",
         border: "1px solid",
