@@ -22,6 +22,21 @@ export const fetchTopicData = async (id: number, limit: number = 25): Promise<fe
     return response.data;
 };
 
+export const addTopic = async (topic: Topic): Promise<{ message: string }> => {
+    // Маппим данные из интерфейса Topic в формат, который ожидает бэкенд
+    const payload = {
+        name_topic: topic.Name_Topic,
+        path_topic: topic.Path_Topic,
+        latitude_topic: topic.Latitude_Topic,
+        longitude_topic: topic.Longitude_Topic,
+        altitude_topic: topic.Altitude_Topic,
+        altitude_sensor_topic: topic.AltitudeSensor_Topic,
+    };
+
+    const response = await api.post<{ message: string }>('/add_topic', payload);
+    return response.data;
+};
+
 export const deleteTopic = async (id: number): Promise<TopicDeleteProps> => {
     // Отправляем POST на /delete_topic с телом { id_topic: id }
     const response = await api.post('/delete_topic', { id_topic: id });

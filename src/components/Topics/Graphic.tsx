@@ -142,7 +142,8 @@ export const TopicChartPanel = ({ topic, onClose, isListOpen, isSidebarOpen }: T
                             angle={-30}
                             textAnchor="end"
                             height={50} 
-                            stroke="#A0AEC0" 
+                            stroke="#A0AEC0"
+                            interval={0} 
                         />
                         <YAxis 
                             axisLine={false} 

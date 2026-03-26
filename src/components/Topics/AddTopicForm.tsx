@@ -1,5 +1,7 @@
+import { addTopic } from "@/utils/api";
 import type { Topic } from "@/utils/types";
-import { VStack, Input, Textarea, Button, Field, HStack } from "@chakra-ui/react"
+import { VStack, Input, Button, Field, HStack } from "@chakra-ui/react"
+import { useEffect } from "react";
 import { useForm } from "react-hook-form"
 
 
@@ -12,6 +14,7 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
     const {
         register,
         handleSubmit,
+        setValue, // Извлекаем setValue для программного обновления полей
         formState: { errors, isSubmitting },
     } = useForm<Topic>({
         defaultValues: {
@@ -23,7 +26,16 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
         }
     })
 
-    const onSubmit = (data: Topic) => {
+    // 2. Следим за изменением initialCoords и обновляем поля формы
+    useEffect(() => {
+        if (initialCoords) {
+            setValue("Latitude_Topic", initialCoords.lat);
+            setValue("Longitude_Topic", initialCoords.lng);
+        }
+    }, [initialCoords, setValue]);
+
+    const onSubmit = async (data: Topic) => {
+    try {
         const formattedData = {
             ...data,
             Latitude_Topic: Number(data.Latitude_Topic),
@@ -31,32 +43,41 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
             Altitude_Topic: Number(data.Altitude_Topic),
             AltitudeSensor_Topic: Number(data.AltitudeSensor_Topic),
         };
-        console.log("Отправка топика:", formattedData);
+
+        // 1. Отправляем запрос
+        const response = await addTopic(formattedData);
+        
+        // 2. Логируем и уведомляем об успехе (как в success в jQuery)
+        console.log(response.message);
+        console.log(`Топик добавлен: ${formattedData.Name_Topic}`);
+        
+        // 3. Вызываем callback родителя, если нужно обновить список на карте/странице
         onSuccess(formattedData);
+        
+    } catch {
+        console.error('Ошибка добавления');
     }
+};
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <VStack gap={4} p={2}>
                 {/* Название топика */}
                 <Field.Root invalid={!!errors.Name_Topic}>
-                    <Field.Label>Название (Name_Topic)</Field.Label>
+                    <Field.Label>Название</Field.Label>
                     <Input 
                         {...register("Name_Topic", { required: "Введите название" })} 
                         placeholder="Введите название..." 
-                        layerStyle="win11Input"
                     />
                     <Field.ErrorText>{errors.Name_Topic?.message}</Field.ErrorText>
                 </Field.Root>
 
                 {/* Путь или описание */}
                 <Field.Root invalid={!!errors.Path_Topic}>
-                    <Field.Label>Путь (Path_Topic)</Field.Label>
-                    <Textarea 
+                    <Field.Label>Путь</Field.Label>
+                    <Input 
                         {...register("Path_Topic")} 
                         placeholder="Укажите путь..." 
-                        layerStyle="win11Input"
-                        rows={2}
                     />
                 </Field.Root>
 
@@ -65,20 +86,18 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
                     <Field.Root invalid={!!errors.Latitude_Topic}>
                         <Field.Label>Широта</Field.Label>
                         <Input 
-                            type="number" 
+                            type="string" 
                             step="any"
                             {...register("Latitude_Topic", { required: true })} 
-                            layerStyle="win11Input"
                         />
                     </Field.Root>
 
                     <Field.Root invalid={!!errors.Longitude_Topic}>
                         <Field.Label>Долгота</Field.Label>
                         <Input 
-                            type="number" 
+                            type="string" 
                             step="any"
                             {...register("Longitude_Topic", { required: true })} 
-                            layerStyle="win11Input"
                         />
                     </Field.Root>
                 </HStack>
@@ -86,20 +105,18 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
                 {/* Высота */}
                 <HStack w="full" gap={4}>
                     <Field.Root>
-                        <Field.Label>Высота (Alt)</Field.Label>
+                        <Field.Label>Высота активации</Field.Label>
                         <Input 
                             type="number" 
                             {...register("Altitude_Topic")} 
-                            layerStyle="win11Input"
                         />
                     </Field.Root>
 
                     <Field.Root>
-                        <Field.Label>Датчик (Sensor)</Field.Label>
+                        <Field.Label>Высота датчика</Field.Label>
                         <Input 
                             type="number" 
                             {...register("AltitudeSensor_Topic")} 
-                            layerStyle="win11Input"
                         />
                     </Field.Root>
                 </HStack>

@@ -24,10 +24,9 @@ export const FloatingPanel = ({
             maxH="calc(100vh - 20px)"
             
             bg="rgba(255, 255, 255, 0.7)"
-            backdropFilter="blur(10px)"
+            backdropFilter="blur(10px) saturate(180%)"
             borderRadius="xl"
             boxShadow="2xl"
-            border="1px solid"
             borderColor="gray.200"
             zIndex={150}
             display="flex"

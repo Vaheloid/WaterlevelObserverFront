@@ -2,13 +2,13 @@ import { useState } from "react"
 import { Flex, Box } from "@chakra-ui/react"
 import axios from "axios" // Для проверки ошибок
 
-import Map from "../Map/Map"
+import Map from "@/components/Map/Map"
 import { useTopics } from "@/hooks/useTopics"
-import { Sidebar } from "./Sidebar"
-import { TopicsPanel } from "../Topics/TopicsPanel"
-import { AddTopicForm } from "../Topics/AddTopicForm"
-import { FloatingPanel } from "../Topics/FloatingPanel"
-import { TopicChartPanel } from "../Topics/Graphic"
+import { Sidebar } from "@/components/MainPage/Sidebar"
+import { TopicsPanel } from "@/components/Topics/TopicsPanel"
+import { AddTopicForm } from "@/components/Topics/AddTopicForm"
+import { FloatingPanel } from "@/components/Topics/FloatingPanel"
+import { TopicChartPanel } from "@/components/Topics/Graphic"
 import { deleteTopic } from "@/utils/api"
 
 export default function MainPage() {
@@ -16,11 +16,27 @@ export default function MainPage() {
     const [activePanel, setActivePanel] = useState<"topics" | "add" | null>(null)
     const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
     const [isChartVisible, setIsChartVisible] = useState(false)
+    const [clickedCoords, setClickedCoords] = useState<{lat: number, lng: number} | null>(null);
     const { topics, loading, loadData } = useTopics(activePanel === "topics")
 
+    const handleMapClick = (lat: number, lng: number) => {
+        if (activePanel === "add") {
+            setClickedCoords({ 
+            lat: Number(lat.toFixed(6)), 
+            lng: Number(lng.toFixed(6)) 
+        });
+        }
+    };
+
+    // Очищаем координаты при закрытии панели
     const handlePanelToggle = (panel: "topics" | "add") => {
-        setActivePanel(activePanel === panel ? null : panel)
-    }
+        if (activePanel === panel) {
+            setActivePanel(null);
+            setClickedCoords(null);
+        } else {
+            setActivePanel(panel);
+        }
+    };
 
     const handleTopicSelect = (id: number | null) => {
         setSelectedTopicId(id)
@@ -80,7 +96,9 @@ export default function MainPage() {
 
             <Flex direction="column" flex="1" position="relative">
                 <Box w="full" h="full" zIndex={1}>
-                    <Map selectedTopicId={selectedTopicId} topics={topics} />
+                    <Map selectedTopicId={selectedTopicId} topics={topics} onMapClick={handleMapClick} // Передаем обработчик
+                        isAdding={activePanel === "add"} // Флаг режима
+                    />
                 </Box>
 
                 {activePanel === "topics" && (
@@ -106,12 +124,20 @@ export default function MainPage() {
 
                 {activePanel === "add" && (
                     <FloatingPanel
-                        onClose={() => setActivePanel(null)}
+                        onClose={() => {
+                            setActivePanel(null);
+                            setClickedCoords(null);
+                        }}
                         isSidebarOpen={isSidebarOpen}
                     >
-                        <AddTopicForm onSuccess={() => {
-                            setActivePanel(null);
-                        }} />
+                        <AddTopicForm 
+                            onSuccess={() => {
+                                setActivePanel(null);
+                                setClickedCoords(null);
+                                loadData(); // Не забываем обновить список
+                            }} 
+                            initialCoords={clickedCoords || undefined} // Передаем координаты
+                        />
                     </FloatingPanel>
                 )}
             </Flex>

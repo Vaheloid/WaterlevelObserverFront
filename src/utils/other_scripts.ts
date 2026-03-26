@@ -10,13 +10,13 @@ export interface ProcessedDataPoint {
 
 export type Point = [number, number];
 
-// Убрал лишние отступы и исправил объявление функции
+
 export const calculateEMA = (
     data: DataPoint[], 
     windowSize: number = 7, 
     smoothing: number = 2, 
     slopeFactor: number = 1
-): ProcessedDataPoint[] => { // Добавлена стрелка => для const
+): ProcessedDataPoint[] => {
     if (data.length === 0) {
         return [];
     }

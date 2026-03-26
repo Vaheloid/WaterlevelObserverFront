@@ -19,7 +19,7 @@ export const LoginLayout = ({ children }: LoginLayoutProps) => {
         <Box
             w="100%"
             bg="rgba(255, 255, 255, 0.7)"
-            backdropFilter="blur(30px) saturate(150%)"
+            backdropFilter="blur(10px) saturate(180%)"
             borderRadius="xl"
             border="1px solid"
             borderColor="whiteAlpha.400"

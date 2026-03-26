@@ -22,11 +22,9 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
     }
 
     return (
-        <Box w="full" p={6} bg="gray.50/30">
+        <Box w="full" p={4}>
             <Box maxW="1400px" mx="auto">
-                
-                <VStack align="stretch" gap={4}>
-                    <Flex justify="space-between" align="center" mb={2} px={1}>
+                <Flex justify="space-between" align="center" mb={5} px={0}>
                         <HStack gap={4}>
                             <Center bg="blue.500" p={2} borderRadius="md" color="white" shadow="0 2px 4px rgba(0,0,0,0.1)">
                                 <FiDatabase size="18px" />
@@ -50,6 +48,8 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                             Всего: {topics.length}
                         </Badge>
                     </Flex>
+                <VStack align="stretch" gap={4}>
+                    
 
                     <Grid 
                         templateColumns="repeat(auto-fill, minmax(360px, 1fr))" 
@@ -64,7 +64,7 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                     key={topic.ID_Topic}
                                     p={4}
                                     bg={isSelected ? "white" : "rgba(255, 255, 255, 0.7)"}
-                                    backdropFilter="blur(20px) saturate(180%)"
+                                    backdropFilter="blur(10px) saturate(180%)"
                                     borderRadius="xl"
                                     border="1px solid"
                                     borderColor={isSelected ? "blue.500" : "gray.200/60"}
@@ -135,23 +135,7 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                                 Координаты
                                             </Text>
                                             <Text fontSize="13px" fontWeight="600" color="gray.700" textAlign="center">
-                                                {topic.Latitude_Topic.toFixed(2)}°, {topic.Longitude_Topic.toFixed(2)}°
-                                            </Text>
-                                        </VStack>
-
-                                        {/* Секция Датчик */}
-                                        <VStack 
-                                            align="center" 
-                                            gap={0} 
-                                            borderLeft="1px solid" 
-                                            borderColor="gray.200" 
-                                            width="100%" 
-                                        >
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
-                                                Датчик
-                                            </Text>
-                                            <Text fontSize="13px" fontWeight="600" color="blue.600" textAlign="center">
-                                                {topic.AltitudeSensor_Topic} м
+                                                {topic.Latitude_Topic}° <br></br> {topic.Longitude_Topic}°
                                             </Text>
                                         </VStack>
 
@@ -164,12 +148,30 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                             width="100%"
                                         >
                                             <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
-                                                Порог
+                                                Высота активации
+                                                
                                             </Text>
-                                            <Text fontSize="13px" fontWeight="600" color="teal.600" textAlign="center">
+                                            <Text fontSize="13px" fontWeight="600" color="teal.600" textAlign="center" marginTop="1">
                                                 {topic.Altitude_Topic} м
                                             </Text>
                                         </VStack>
+
+                                        {/* Секция Датчик */}
+                                        <VStack 
+                                            align="center" 
+                                            gap={0} 
+                                            borderLeft="1px solid" 
+                                            borderColor="gray.200" 
+                                            width="100%" 
+                                        >
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
+                                                Высота <br></br> датчика
+                                            </Text>
+                                            <Text fontSize="13px" fontWeight="600" color="blue.600" textAlign="center" marginTop="1">
+                                                {topic.AltitudeSensor_Topic} м
+                                            </Text>
+                                        </VStack>
+
                                     </Grid>
 
                                     <Separator mb={3} opacity="0.4" />

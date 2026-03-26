@@ -32,7 +32,7 @@ export interface Topic {
 export interface TopicsPanelProps {
     onClose: () => void
     onTopicSelect: (id: number | null) => void
-    onTopicDelete: (id: number) => Promise<void> // Добавлено
+    onTopicDelete: (id: number) => Promise<void>
     selectedTopicId: number | null
     topics: Topic[]
     loading: boolean
@@ -58,12 +58,15 @@ export interface GetTopicsProps {
     loading: boolean;
     selectedTopicId: number | null;
     onTopicSelect: (id: number | null) => void;
-    onTopicDelete: (id: number) => Promise<void>; // Добавлено
+    onTopicDelete: (id: number) => Promise<void>;
 }
+
 
 export interface MapProps {
     selectedTopicId: number | null;
     topics: Topic[];
+    onMapClick?: (lat: number, lng: number) => void;
+    isAdding?: boolean; // Чтобы клик работал только когда открыта форма
 }
 
 export interface TopicDeleteProps {

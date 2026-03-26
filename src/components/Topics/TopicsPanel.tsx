@@ -22,7 +22,7 @@ export const TopicsPanel = ({
             left={`${currentLeft}px`}
             w="400px"
             bg="rgba(255, 255, 255, 0.7)"
-            backdropFilter="blur(10px)"
+            backdropFilter="blur(10px) saturate(180%)"
             borderRadius="xl"
             boxShadow="2xl"
             zIndex={150}
@@ -39,7 +39,13 @@ export const TopicsPanel = ({
                     <X size={18} />
                 </Button>
             </Flex>
-            <Box p={2} overflowY="auto" flex="1">
+            <Box p={2} 
+                css={{
+                    '&::-webkit-scrollbar': { display: 'none' },
+                    msOverflowStyle: 'none',
+                    scrollbarWidth: 'none',
+                }}
+                overflowY="auto" flex="1">
                 <GetTopics 
                     onTopicSelect={onTopicSelect} 
                     onTopicDelete={onTopicDelete} 

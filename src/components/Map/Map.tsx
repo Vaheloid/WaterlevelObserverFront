@@ -1,4 +1,4 @@
-import { Marker, Popup, GeoJSON, Tooltip } from "react-leaflet";
+import { Marker, Popup, GeoJSON, Tooltip, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type { MapProps } from "@/utils/types";
@@ -13,7 +13,19 @@ const TileLayer = lazy(() =>
   import("react-leaflet").then((module) => ({ default: module.TileLayer }))
 );
 
-export default function Map({ selectedTopicId, topics }: MapProps) {
+// Вспомогательный компонент для прослушивания кликов
+function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
+    useMapEvents({
+        click(e) {
+            onMapClick(e.latlng.lat, e.latlng.lng);
+        },
+    });
+    return null;
+}
+
+
+
+export default function Map({ selectedTopicId, topics, onMapClick, isAdding }: MapProps) {
     const { mergedGeoJSON } = useTopicData(selectedTopicId);
     const currentTopicInfo = topics.find(t => t.ID_Topic === selectedTopicId);
 
@@ -27,6 +39,9 @@ export default function Map({ selectedTopicId, topics }: MapProps) {
             preferCanvas={true}
         >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+            {/* Активируем обработчик кликов только в режиме добавления */}
+            {isAdding && onMapClick && <MapClickHandler onMapClick={onMapClick} />}
 
             {/* Центрирование */}
             {currentTopicInfo && (
