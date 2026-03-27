@@ -1,5 +1,5 @@
-import { fetchTopics } from '@/utils/api';
-import type { Topic } from '@/utils/types';
+import { fetchTopics } from '@/utils/api.ts';
+import type { Topic } from '@/utils/types.ts';
 import { useState, useEffect, useCallback } from 'react';
 
 

@@ -1,5 +1,5 @@
-import { addTopic } from "@/utils/api";
-import type { Topic } from "@/utils/types";
+import { addTopic } from "@/utils/api.ts";
+import type { Topic } from "@/utils/types.ts";
 import { VStack, Input, Button, Field, HStack } from "@chakra-ui/react"
 import { useEffect } from "react";
 import { useForm } from "react-hook-form"
@@ -18,8 +18,8 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
         formState: { errors, isSubmitting },
     } = useForm<Topic>({
         defaultValues: {
-            Latitude_Topic: initialCoords?.lat || 0,
-            Longitude_Topic: initialCoords?.lng || 0,
+            Latitude_Topic: initialCoords?.lat,
+            Longitude_Topic: initialCoords?.lng,
             Altitude_Topic: 60,
             AltitudeSensor_Topic: 60,
             Path_Topic: ""
@@ -72,20 +72,23 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
                 <Field.Root invalid={!!errors.Path_Topic}>
                     <Field.Label>Путь</Field.Label>
                     <Input 
-                        {...register("Path_Topic")} 
-                        placeholder="Укажите путь..." 
+                        {...register("Path_Topic", { required: "Введите путь" })} 
+                        placeholder="Введите путь..." 
                     />
+                    <Field.ErrorText>{errors.Path_Topic?.message}</Field.ErrorText>
                 </Field.Root>
 
                 {/* Координаты в ряд */}
-                <HStack w="full" gap={4}>
+                <HStack w="full" gap={4} alignItems="flex-start">
                     <Field.Root invalid={!!errors.Latitude_Topic}>
                         <Field.Label>Широта</Field.Label>
                         <Input 
                             type="string" 
                             step="any"
-                            {...register("Latitude_Topic", { required: true })} 
+                            {...register("Latitude_Topic", { required: "Введите широту" })}
+                            placeholder="Нажмите на карту" 
                         />
+                        <Field.ErrorText>{errors.Latitude_Topic?.message}</Field.ErrorText>
                     </Field.Root>
 
                     <Field.Root invalid={!!errors.Longitude_Topic}>
@@ -93,37 +96,41 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
                         <Input 
                             type="string" 
                             step="any"
-                            {...register("Longitude_Topic", { required: true })} 
+                            {...register("Longitude_Topic", { required: "Введите долготу" })}
+                            placeholder="Нажмите на карту"
                         />
+                        <Field.ErrorText>{errors.Longitude_Topic?.message}</Field.ErrorText>
                     </Field.Root>
                 </HStack>
 
                 {/* Высота */}
-                <HStack w="full" gap={4}>
-                    <Field.Root>
+                <HStack w="full" gap={4} alignItems="flex-start">
+                    <Field.Root invalid={!!errors.Altitude_Topic}>
                         <Field.Label>Высота активации</Field.Label>
                         <Input 
                             type="number" 
-                            {...register("Altitude_Topic")}
+                            {...register("Altitude_Topic", { required: "Введите высоту активации" })}
                             onWheel={(e) => {
                                 const step = 1;
                                 const current = Number(e.currentTarget.value);
                                 setValue("Altitude_Topic", e.deltaY < 0 ? current + step : current - step);
                             }}
                         />
+                        <Field.ErrorText>{errors.Altitude_Topic?.message}</Field.ErrorText>
                     </Field.Root>
 
-                    <Field.Root>
+                    <Field.Root invalid={!!errors.AltitudeSensor_Topic}>
                         <Field.Label>Высота датчика</Field.Label>
                         <Input 
                             type="number" 
-                            {...register("AltitudeSensor_Topic")}
+                            {...register("AltitudeSensor_Topic", { required: "Введите высоту датчика" })}
                             onWheel={(e) => {
                                 const step = 1;
                                 const current = Number(e.currentTarget.value);
                                 setValue("AltitudeSensor_Topic", e.deltaY < 0 ? current + step : current - step);
                             }} 
                         />
+                        <Field.ErrorText>{errors.AltitudeSensor_Topic?.message}</Field.ErrorText>
                     </Field.Root>
                 </HStack>
 

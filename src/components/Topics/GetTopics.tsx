@@ -6,7 +6,7 @@ import {
     FiTrash2, FiActivity, 
     FiDatabase, FiChevronRight 
 } from 'react-icons/fi';
-import type { GetTopicsProps, Topic } from '@/utils/types';
+import type { GetTopicsProps, Topic } from '@/utils/types.ts';
 
 export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading }: GetTopicsProps) {
     const handleTopicClick = (topic: Topic) => {

@@ -1,7 +1,7 @@
 import { Box, Flex, HStack, Heading, Button } from "@chakra-ui/react"
 import { BarChart3, X } from "lucide-react"
-import GetTopics from "./GetTopics"
-import type { TopicsPanelProps } from "@/utils/types";
+import GetTopics from "@/components/Topics/GetTopics.tsx"
+import type { TopicsPanelProps } from "@/utils/types.ts";
 
 export const TopicsPanel = ({ 
     onClose, 

@@ -1,9 +1,13 @@
 import { Marker, Popup, GeoJSON, Tooltip, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import type { MapProps } from "@/utils/types";
-import { RecenterMap } from "@/utils/mapUtils";
+import type { MapProps } from "@/utils/types.ts";
+import { RecenterMap } from "@/utils/mapUtils.ts";
 import { lazy } from "react";
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
 const MapContainer = lazy(() =>
   import("react-leaflet").then((module) => ({ default: module.MapContainer }))
@@ -11,6 +15,12 @@ const MapContainer = lazy(() =>
 const TileLayer = lazy(() =>
   import("react-leaflet").then((module) => ({ default: module.TileLayer }))
 );
+
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
 
 function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
     useMapEvents({
@@ -63,7 +73,7 @@ export default function Map({ selectedTopicId, topics, onMapClick, isAdding, mer
             )}
 
             {/* Маркер */}
-            {topics.map((topic) => (
+            {topics && topics.length > 0 && topics.map((topic) => (
                 <Marker key={topic.ID_Topic} position={[topic.Latitude_Topic, topic.Longitude_Topic]}>
                     <Popup>{topic.Name_Topic}</Popup>
                     <Tooltip>

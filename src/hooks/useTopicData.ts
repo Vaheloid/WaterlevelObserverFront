@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchTopicData } from '../utils/api';
-import { processCoordinatesToHull } from '../utils/geoUtils';
+import { fetchTopicData } from '@/utils/api.ts';
+import { processCoordinatesToHull } from '@/utils/geoUtils.ts';
 import type { Feature, Polygon, MultiPolygon, GeoJsonProperties } from 'geojson';
-import { calculateEMA } from '@/utils/other_scripts';
+import { calculateEMA } from '@/utils/other_scripts.ts';
 
 export interface ChartDataNode {
     time: string;

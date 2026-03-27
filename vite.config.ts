@@ -25,13 +25,4 @@ export default defineConfig({
       }
     },
   },
-  build: {
-    // генерация .vite/manifest.json в outDir
-    manifest: true,
-    rollupOptions: {
-      // перезапись стандартной точки входа .html
-      // Убедись, что путь '/path/to/main.js' корректен для твоего проекта
-      input: '/path/to/main.js',
-    },
-  },
 })

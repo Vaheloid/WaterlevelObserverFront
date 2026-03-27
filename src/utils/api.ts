@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { fetchTopicDataResponse, Topic, FormValues, LoginResponse, TopicDeleteProps } from "./types";
+import type { fetchTopicDataResponse, Topic, FormValues, LoginResponse, TopicDeleteProps } from "@/utils/types.ts";
 
 const api = axios.create({
     baseURL: '/api',

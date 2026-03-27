@@ -1,7 +1,7 @@
 import { Stack, Field, Input, Button, Alert } from "@chakra-ui/react"
 import { PasswordInput } from "@/components/ui/password-input"
 import { useForm } from "react-hook-form"
-import type { FormValues, LoginFormProps } from "@/utils/types"
+import type { FormValues, LoginFormProps } from "@/utils/types.ts"
 
 export const LoginForm = ({ onSubmit, isSubmitting, loginError }: LoginFormProps) => {
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>()

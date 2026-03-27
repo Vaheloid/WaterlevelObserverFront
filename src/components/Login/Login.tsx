@@ -2,10 +2,10 @@ import { Box, Heading, Text, Center, Stack } from "@chakra-ui/react"
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from "react-hook-form"
-import type { FormValues } from "@/utils/types"
-import { loginUser } from "@/utils/api"
-import { LoginLayout } from "./LoginLayout"
-import { LoginForm } from "./LoginForm"
+import type { FormValues } from "@/utils/types.ts"
+import { loginUser } from "@/utils/api.ts"
+import { LoginLayout } from "@/components/Login/LoginLayout.tsx"
+import { LoginForm } from "@/components/Login/LoginForm.tsx"
 
 
 export default function Login() {

@@ -1,6 +1,6 @@
 import { Box, VStack, Flex, Heading } from "@chakra-ui/react";
-import { Menu, X, BarChart3, Plus } from "lucide-react";
-import { NavButton } from "./NavButton";
+import { Menu, BarChart3, Plus, PanelLeftClose } from "lucide-react";
+import { NavButton } from "@/components/MainPage/NavButton.tsx";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -28,7 +28,7 @@ export const Sidebar = ({
             border="1px solid"
             borderColor="rgba(255, 255, 255, 0.3)"
             borderRadius="10px"
-            boxShadow="lg"
+            boxShadow="2xl"
             transition="width 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
             zIndex={200}
             p={4}
@@ -48,7 +48,7 @@ export const Sidebar = ({
                         </Heading>
                     )}
                     <NavButton
-                        icon={isOpen ? <X size={24} /> : <Menu size={24} />}
+                        icon={isOpen ? <PanelLeftClose /> : <Menu size={24} />}
                         isExpanded={false}
                         onClick={onToggle}
                         aria-label="Toggle Sidebar"

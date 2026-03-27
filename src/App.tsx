@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import './index.css'
-import Login from './components/Login/Login'
-import MainPage from './components/MainPage/MainPage'
+import '@/index.css'
+import Login from '@/components/Login/Login.tsx'
+import MainPage from '@/components/MainPage/MainPage.tsx'
 import { Flex } from '@chakra-ui/react'
 
 export default function App() {
