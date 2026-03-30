@@ -1,14 +1,9 @@
 import { addTopic } from "@/utils/api.ts";
-import type { Topic } from "@/utils/types.ts";
+import type { Topic, TopicAddFormProps } from "@/utils/types.ts";
 import { VStack, Input, Button, Field, HStack } from "@chakra-ui/react"
 import { useEffect } from "react";
 import { useForm } from "react-hook-form"
 
-
-interface TopicAddFormProps {
-    onSuccess: (data: Topic) => void;
-    initialCoords?: { lat: number; lng: number };
-}
 
 export const TopicAddForm = ({ onSuccess, initialCoords }: TopicAddFormProps) => {
     const {

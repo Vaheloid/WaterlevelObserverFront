@@ -1,14 +1,5 @@
-export interface DataPoint {
-    Value_Data: string;
-    Time_Data: number;
-}
+import type { DataPoint, ProcessedDataPoint } from "@/utils/types";
 
-export interface ProcessedDataPoint {
-    Value_Data: number | null;
-    Time_Data: number;
-}
-
-export type Point = [number, number];
 
 
 export const calculateEMA = (

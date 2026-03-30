@@ -1,4 +1,6 @@
+import type { ButtonProps } from '@chakra-ui/react';
 import type { Feature, Polygon, MultiPolygon, GeoJsonProperties } from 'geojson';
+import type { ReactElement, ReactNode } from 'react';
 /**
  * Auth Types
  */
@@ -17,6 +19,10 @@ export interface LoginFormProps {
     loginError: string | null;
 }
 
+export interface LoginLayoutProps {
+    children: ReactNode
+}
+
 /**
  * Data Types
  */
@@ -28,6 +34,36 @@ export interface Topic {
     Longitude_Topic: number;
     Altitude_Topic: number; 
     AltitudeSensor_Topic: number;
+}
+
+export interface TopicAddFormProps {
+    onSuccess: (data: Topic) => void;
+    initialCoords?: { lat: number; lng: number };
+}
+
+export interface TopicAddPanelProps {
+    onClose: () => void
+    children: React.ReactNode
+    isSidebarOpen: boolean
+}
+
+export interface TopicChartPanelProps {
+    topic: Topic | null
+    chartData: ChartDataNode[];
+    onClose: () => void
+    isListOpen: boolean
+    isSidebarOpen: boolean
+}
+
+export interface TopicApiResponse {
+    Data: TopicDataItem[];
+    Depression_AreaPoints?: string[];
+}
+
+export interface ChartDataNode {
+    time: string;
+    value: number | null;
+    ema: number | null;
 }
 
 export interface TopicsPanelProps {
@@ -75,3 +111,29 @@ export interface TopicDeleteProps {
     onTopicDelete: (id: number) => Promise<void>;
     message: string;
 }
+
+export interface NavButtonProps extends ButtonProps {
+    icon: ReactElement
+    label?: string
+    isExpanded: boolean
+    isActive?: boolean
+}
+
+export interface SidebarProps {
+    isOpen: boolean;
+    onToggle: () => void;
+    activePanel: string | null;
+    onPanelToggle: (panel: "topics" | "add") => void;
+}
+
+export interface DataPoint {
+    Value_Data: string;
+    Time_Data: number;
+}
+
+export interface ProcessedDataPoint {
+    Value_Data: number | null;
+    Time_Data: number;
+}
+
+export type Point = [number, number];

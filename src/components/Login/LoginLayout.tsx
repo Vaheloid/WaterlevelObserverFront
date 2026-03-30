@@ -1,9 +1,6 @@
+import type { LoginLayoutProps } from "@/utils/types"
 import { Box, AbsoluteCenter } from "@chakra-ui/react"
-import { type ReactNode } from "react"
 
-interface LoginLayoutProps {
-    children: ReactNode
-}
 
 export const LoginLayout = ({ children }: LoginLayoutProps) => {
     return (

@@ -2,65 +2,50 @@ import { useState, useEffect, useCallback } from 'react';
 import { fetchTopicData } from '@/utils/api.ts';
 import { processCoordinatesToHull } from '@/utils/geoUtils.ts';
 import type { Feature, Polygon, MultiPolygon, GeoJsonProperties } from 'geojson';
-import { calculateEMA } from '@/utils/other_scripts.ts';
+import { chartUtils } from '@/utils/chartUtils'; // Импортируем тип из утилит
+import type { ChartDataNode, TopicApiResponse } from '@/utils/types';
 
-export interface ChartDataNode {
-    time: string;
-    value: number | null;
-    ema: number | null;
-}
 
 export function useTopicData(selectedTopicId: number | null) {
     const [mergedGeoJSON, setMergedGeoJSON] = useState<Feature<Polygon | MultiPolygon, GeoJsonProperties> | null>(null);
     const [loadingTopicData, setLoadingTopicData] = useState<boolean>(false);
     const [chartData, setChartData] = useState<ChartDataNode[]>([]);
+
     const loadTopicData = useCallback(async () => {
         if (!selectedTopicId) {
             setMergedGeoJSON(null);
+            setChartData([]);
             return;
         }
 
+        const fetchData = async (): Promise<TopicApiResponse | null> => {
+            try {
+                setLoadingTopicData(true);
+                return await fetchTopicData(selectedTopicId);
+            } catch (err) {
+                console.error("Ошибка при загрузке данных топика:", err);
+                setLoadingTopicData(false);
+                return null;
+            }
+        };
+
+        const data = await fetchData();
+
+        if (!data) return;
+
         try {
-            setLoadingTopicData(true);
-            const data = await fetchTopicData(selectedTopicId);
-            
-            const rawDataFromApi = data.Data; 
-
-            const emaCalculated = calculateEMA(rawDataFromApi, 7, 2, 2);
-
-            const chartDataWithEMA = emaCalculated.map((emaItem, index) => {
-                const date = new Date(emaItem.Time_Data * 1000);
-                
-                const formattedDate = date.toLocaleDateString('ru-RU', { 
-                    day: '2-digit', month: '2-digit', year: 'numeric' 
-                });
-                const formattedTime = date.toLocaleTimeString('ru-RU', { 
-                    hour: '2-digit', minute: '2-digit', second: '2-digit'
-                });
-
-                return {
-                    time: `${formattedDate} ${formattedTime}`,
-                    value: rawDataFromApi[index] ? parseFloat(rawDataFromApi[index].Value_Data) : null,
-                    ema: emaItem.Value_Data 
-                };
-            });
-
-            if(!data.Depression_AreaPoints || data.Depression_AreaPoints.length === 0) {
-                console.warn("Нет данных для текущего топика");
-            }
-            else {
-                console.log("Данные топика", data);
-                console.log("Средняя скользящая", emaCalculated);
-                console.log("Диаграмма отображена с данными текущего топика");
-            }
-
+            const chartDataWithEMA = chartUtils(data);
             setChartData(chartDataWithEMA);
-            
+        } catch (err) {
+            console.error("Ошибка при расчете данных для графика:", err);
+        } finally {
+            setLoadingTopicData(false);
+        }
+
+        try {
             const rawCoordsString = data.Depression_AreaPoints?.[0];
-            const topicDataPoints = data.Depression_AreaPoints;
-            
             if (rawCoordsString) {
-                console.log('Парсинг успешен:', topicDataPoints);
+                console.log('Парсинг успешен:', data.Depression_AreaPoints);
                 console.log('Полигоны отображены с данными текущего топика');
                 const finalResult = processCoordinatesToHull(rawCoordsString);
                 setMergedGeoJSON(finalResult);
@@ -69,22 +54,19 @@ export function useTopicData(selectedTopicId: number | null) {
                 console.error('Depression_AreaPoints не является массивом после парсинга');
             }
         } catch (err) {
-            console.error("Ошибка при парсинге Depression_AreaPoints: ", err);
+            console.error('Ошибка при парсинге Depression_AreaPoints:', err);
             setMergedGeoJSON(null);
-        } finally {
-            setLoadingTopicData(false);
         }
     }, [selectedTopicId]);
 
     useEffect(() => {
-    loadTopicData();
+        loadTopicData();
 
-    if (selectedTopicId) {
-        const interval = setInterval(loadTopicData, 10000);
-        return () => clearInterval(interval);
-    } 
-
-}, [loadTopicData, selectedTopicId]);
+        if (selectedTopicId) {
+            const interval = setInterval(loadTopicData, 10000);
+            return () => clearInterval(interval);
+        }
+    }, [loadTopicData, selectedTopicId]);
 
     return { mergedGeoJSON, loadingTopicData, chartData };
 }

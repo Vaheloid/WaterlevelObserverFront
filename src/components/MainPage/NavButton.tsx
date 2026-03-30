@@ -1,12 +1,5 @@
-import { Button, Center, Text, type ButtonProps } from "@chakra-ui/react"
-import { type ReactElement } from "react"
-
-interface NavButtonProps extends ButtonProps {
-	icon: ReactElement
-	label?: string
-	isExpanded: boolean
-	isActive?: boolean
-}
+import type { NavButtonProps } from "@/utils/types"
+import { Button, Center, Text} from "@chakra-ui/react"
 
 export const NavButton = ({ icon, label, isExpanded, isActive, ...props }: NavButtonProps) => (
 	<Button

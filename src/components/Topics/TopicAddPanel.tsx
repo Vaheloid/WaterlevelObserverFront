@@ -1,11 +1,6 @@
+import type { TopicAddPanelProps } from "@/utils/types";
 import { Box, Flex, HStack, Heading, Button} from "@chakra-ui/react"
 import { Plus, X } from "lucide-react"
-
-interface TopicAddPanelProps {
-    onClose: () => void
-    children: React.ReactNode
-    isSidebarOpen: boolean
-}
 
 export const TopicAddPanel = ({  
     onClose, 

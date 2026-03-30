@@ -1,13 +1,8 @@
 import { Box, VStack, Flex, Heading } from "@chakra-ui/react";
 import { Menu, BarChart3, Plus, PanelLeftClose } from "lucide-react";
 import { NavButton } from "@/components/MainPage/NavButton.tsx";
+import type { SidebarProps } from "@/utils/types";
 
-interface SidebarProps {
-    isOpen: boolean;
-    onToggle: () => void;
-    activePanel: string | null;
-    onPanelToggle: (panel: "topics" | "add") => void;
-}
 
 export const Sidebar = ({
     isOpen,

@@ -1,19 +1,10 @@
 import { useState } from "react"
 import { Box, Flex, HStack, Heading, Text, Center, VStack, IconButton } from "@chakra-ui/react"
 import { FiTrendingUp, FiX, FiMinus, FiMaximize2 } from "react-icons/fi"
-import type { Topic } from "@/utils/types.ts"
+import type { TopicChartPanelProps } from "@/utils/types.ts"
 import { Chart, useChart } from "@chakra-ui/charts"
 import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, Legend } from "recharts"
 import { motion, AnimatePresence } from "framer-motion"
-import { type ChartDataNode } from "@/hooks/useTopicData.ts"
-
-interface TopicChartPanelProps {
-    topic: Topic | null
-    chartData: ChartDataNode[];
-    onClose: () => void
-    isListOpen: boolean
-    isSidebarOpen: boolean
-}
 
 export const TopicChartPanel = ({ topic, chartData, onClose, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
