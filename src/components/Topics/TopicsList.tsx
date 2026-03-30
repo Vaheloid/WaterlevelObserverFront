@@ -6,12 +6,21 @@ import {
     FiTrash2, FiActivity, 
     FiDatabase, FiChevronRight 
 } from 'react-icons/fi';
-import type { GetTopicsProps, Topic } from '@/utils/types.ts';
+import type { TopicsListProps, Topic } from '@/utils/types.ts';
 
-export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading }: GetTopicsProps) {
-    const handleTopicClick = (topic: Topic) => {
-        onTopicSelect(selectedTopicId === topic.ID_Topic ? null : topic.ID_Topic);
-    };
+export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading }: TopicsListProps) {
+const handleTopicClick = (topic: Topic) => {
+    const isDeselcting = selectedTopicId === topic.ID_Topic;
+
+    if (isDeselcting) {
+        console.log("Отмена выбора топика:", topic.Name_Topic);
+        onTopicSelect(null);
+    } else {
+        console.log("Выбран топик: ", topic.Name_Topic);
+        onTopicSelect(topic.ID_Topic);
+    }
+
+};
 
     if (loading && topics.length === 0) {
         return (

@@ -8,12 +8,15 @@ export const useTopics = (enabled: boolean = false) => {
     const [loading, setLoading] = useState(false);
 
     const loadData = useCallback(async (isInitial = false) => {
+
         if (isInitial) setLoading(true);
+
         try {
             const data = await fetchTopics();
             setTopics(data);
+            console.log("Список топиков: ", data);
         } catch (error) {
-            console.error("Ошибка при обновлении топиков:", error);
+            console.error("Ошибка при получении данных: ", error);
         } finally {
             if (isInitial) setLoading(false);
         }
@@ -24,6 +27,7 @@ export const useTopics = (enabled: boolean = false) => {
         loadData(true);
         const intervalId = setInterval(() => {
             loadData(false);
+            console.log("Список топиков обновлен");
         }, 10000);
 
         return () => {

@@ -54,7 +54,7 @@ export interface fetchTopicDataResponse {
 /**
  * Component Props
  */
-export interface GetTopicsProps {
+export interface TopicsListProps {
     topics: Topic[];
     loading: boolean;
     selectedTopicId: number | null;

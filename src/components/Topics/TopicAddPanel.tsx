@@ -1,17 +1,17 @@
 import { Box, Flex, HStack, Heading, Button} from "@chakra-ui/react"
 import { Plus, X } from "lucide-react"
 
-interface FloatingPanelProps {
+interface TopicAddPanelProps {
     onClose: () => void
     children: React.ReactNode
     isSidebarOpen: boolean
 }
 
-export const FloatingPanel = ({  
+export const TopicAddPanel = ({  
     onClose, 
     children, 
     isSidebarOpen 
-}: FloatingPanelProps) => {
+}: TopicAddPanelProps) => {
     const sidebarWidth = isSidebarOpen ? 280 : 80;
     const currentLeft = 10 + sidebarWidth + 10;
 

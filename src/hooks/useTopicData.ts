@@ -45,18 +45,31 @@ export function useTopicData(selectedTopicId: number | null) {
                 };
             });
 
+            if(!data.Depression_AreaPoints || data.Depression_AreaPoints.length === 0) {
+                console.warn("Нет данных для текущего топика");
+            }
+            else {
+                console.log("Данные топика", data);
+                console.log("Средняя скользящая", emaCalculated);
+                console.log("Диаграмма отображена с данными текущего топика");
+            }
+
             setChartData(chartDataWithEMA);
-
+            
             const rawCoordsString = data.Depression_AreaPoints?.[0];
-
+            const topicDataPoints = data.Depression_AreaPoints;
+            
             if (rawCoordsString) {
+                console.log('Парсинг успешен:', topicDataPoints);
+                console.log('Полигоны отображены с данными текущего топика');
                 const finalResult = processCoordinatesToHull(rawCoordsString);
                 setMergedGeoJSON(finalResult);
             } else {
                 setMergedGeoJSON(null);
+                console.error('Depression_AreaPoints не является массивом после парсинга');
             }
         } catch (err) {
-            console.error("Ошибка при загрузке деталей топика:", err);
+            console.error("Ошибка при парсинге Depression_AreaPoints: ", err);
             setMergedGeoJSON(null);
         } finally {
             setLoadingTopicData(false);
@@ -64,13 +77,14 @@ export function useTopicData(selectedTopicId: number | null) {
     }, [selectedTopicId]);
 
     useEffect(() => {
-        loadTopicData();
-        
-        if (selectedTopicId) {
-            const interval = setInterval(loadTopicData, 10000);
-            return () => clearInterval(interval);
-        }
-    }, [loadTopicData, selectedTopicId]);
+    loadTopicData();
+
+    if (selectedTopicId) {
+        const interval = setInterval(loadTopicData, 10000);
+        return () => clearInterval(interval);
+    } 
+
+}, [loadTopicData, selectedTopicId]);
 
     return { mergedGeoJSON, loadingTopicData, chartData };
 }

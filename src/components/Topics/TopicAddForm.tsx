@@ -5,12 +5,12 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form"
 
 
-interface AddTopicFormProps {
+interface TopicAddFormProps {
     onSuccess: (data: Topic) => void;
     initialCoords?: { lat: number; lng: number };
 }
 
-export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) => {
+export const TopicAddForm = ({ onSuccess, initialCoords }: TopicAddFormProps) => {
     const {
         register,
         handleSubmit,
@@ -51,7 +51,7 @@ export const AddTopicForm = ({ onSuccess, initialCoords }: AddTopicFormProps) =>
         onSuccess(formattedData);
         
     } catch {
-        console.error('Ошибка добавления');
+        console.error('Ошибка при добавлении топика');
     }
 };
 

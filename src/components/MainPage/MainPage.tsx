@@ -6,9 +6,9 @@ import Map from "@/components/Map/Map.tsx"
 import { useTopics } from "@/hooks/useTopics.ts"
 import { Sidebar } from "@/components/MainPage/Sidebar.tsx"
 import { TopicsPanel } from "@/components/Topics/TopicsPanel.tsx"
-import { AddTopicForm } from "@/components/Topics/AddTopicForm.tsx"
-import { FloatingPanel } from "@/components/Topics/FloatingPanel.tsx"
-import { TopicChartPanel } from "@/components/Topics/Graphic.tsx"
+import { TopicAddForm } from "@/components/Topics/TopicAddForm"
+import { TopicAddPanel } from "@/components/Topics/TopicAddPanel"
+import { TopicChartPanel } from "@/components/Topics/TopicChartPanel"
 import { deleteTopic } from "@/utils/api.ts"
 import { useTopicData } from "@/hooks/useTopicData.ts"
 
@@ -41,6 +41,7 @@ export default function MainPage() {
 
     const handleTopicSelect = (id: number | null) => {
         setSelectedTopicId(id)
+        
         if (id !== null) {
             setIsChartVisible(true)
         }
@@ -127,14 +128,14 @@ export default function MainPage() {
                 )}
 
                 {activePanel === "add" && (
-                    <FloatingPanel
+                    <TopicAddPanel
                         onClose={() => {
                             setActivePanel(null);
                             setClickedCoords(null);
                         }}
                         isSidebarOpen={isSidebarOpen}
                     >
-                        <AddTopicForm 
+                        <TopicAddForm
                             onSuccess={() => {
                                 setActivePanel(null);
                                 setClickedCoords(null);
@@ -142,7 +143,7 @@ export default function MainPage() {
                             }} 
                             initialCoords={clickedCoords || undefined}
                         />
-                    </FloatingPanel>
+                    </TopicAddPanel>
                 )}
             </Flex>
         </Flex>
