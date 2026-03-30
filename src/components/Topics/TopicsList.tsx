@@ -196,7 +196,6 @@ const handleTopicClick = (topic: Topic) => {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             onTopicDelete(topic.ID_Topic);
-                                            console.log('Delete', topic.ID_Topic);
                                         }}
                                         _hover={{ bg: "red.50", color: "red.600" }}
                                     >

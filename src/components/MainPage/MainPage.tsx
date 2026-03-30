@@ -52,9 +52,8 @@ export default function MainPage() {
      */
     const handleTopicDelete = async (id: number) => {
         try {
-            const response = await deleteTopic(id);
+            deleteTopic(id);
             await loadData();
-            console.log(response.message); 
             console.log(`Топик удален: ${id}`);
             
 

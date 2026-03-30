@@ -1,12 +1,12 @@
 import { useState } from "react"
 import { Box, Flex, HStack, Heading, Text, Center, VStack, IconButton } from "@chakra-ui/react"
-import { FiTrendingUp, FiX, FiMinus, FiMaximize2 } from "react-icons/fi"
+import { FiTrendingUp, FiMinus, FiMaximize2 } from "react-icons/fi"
 import type { TopicChartPanelProps } from "@/utils/types.ts"
 import { Chart, useChart } from "@chakra-ui/charts"
 import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, Legend } from "recharts"
 import { motion, AnimatePresence } from "framer-motion"
 
-export const TopicChartPanel = ({ topic, chartData, onClose, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
+export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
 
     const chart = useChart({
@@ -95,18 +95,6 @@ export const TopicChartPanel = ({ topic, chartData, onClose, isListOpen, isSideb
                         borderRadius="full"
                     >
                         {isCollapsed ? <FiMaximize2 size={16} /> : <FiMinus size={18} />}
-                    </IconButton>
-                    <IconButton
-                        bg="white"
-                        shadow="xs"
-                        aria-label="Close"
-                        variant="ghost"
-                        size="sm"
-                        onClick={onClose}
-                        borderRadius="full"
-                        _hover={{ bg: "rgba(255, 0, 0, 0.1)", color: "red.500" }}
-                    >
-                        <FiX size={18} />
                     </IconButton>
                 </HStack>
             </Flex>
