@@ -85,35 +85,24 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                 <Box
                                     key={topic.ID_Topic}
                                     p={4}
-                                    bg={isSelected ? "white" : "rgba(255, 255, 255, 0.7)"}
+                                    bg={isSelected ? "white" : "rgba(255, 255, 255, 0.8)"}
                                     borderRadius="xl"
                                     border="1px solid"
                                     borderColor={isSelected ? "blue.500" : "gray.200/60"}
                                     onClick={() => handleTopicClick(topic)}
                                     position="relative"
-                                    
-                                    // --- ЭФФЕКТ ПРИГЛУШЕНИЯ ---
-                                    // Уменьшаем прозрачность до 0.4 для сильного акцента на выбранном
                                     opacity={shouldBlur ? 0.4 : 1}
-                                    // Добавляем легкое обесцвечивание, чтобы карточки не отвлекали цветом
                                     filter={shouldBlur ? "grayscale(0.8)" : "none"}
-                                    
-                                    // Запрещаем взаимодействие с курсором
                                     cursor={isSelectionDisabled ? "not-allowed" : "pointer"}
-
-                                    // --- БЫСТРАЯ АНИМАЦИЯ ---
                                     transition="all 0.15s ease-out" 
-                                    
                                     _hover={
                                         isSelectionDisabled 
                                         ? { 
-                                            // Стили при наведении во время блокировки
                                             cursor: "not-allowed",
-                                            transform: "none", // Убираем подпрыгивание
-                                            shadow: "none"     // Убираем появление тени
+                                            transform: "none",
+                                            shadow: "none"
                                         } 
                                         : { 
-                                            // Обычные стили наведения
                                             bg: "white",
                                             borderColor: isSelected ? "blue.600" : "gray.300",
                                             shadow: "0 4px 12px rgba(0,0,0,0.08)",
