@@ -54,21 +54,21 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
     return (
         <Box w="full" p={4}>
             <Box maxW="1400px" mx="auto">
-                <Flex justify="space-between" align="center" mb={5}>
-                    <HStack gap={4}>
-                        <Center bg="blue.500" p={2} borderRadius="md" color="white" shadow="0 2px 4px rgba(0,0,0,0.1)">
-                            <FiDatabase size="18px" />
-                        </Center>
-                        <VStack align="start" gap={0}>
-                            <Heading size="sm" fontWeight="500" letterSpacing="-0.01em">
-                                Управление топиками
-                            </Heading>
-                        </VStack>
-                    </HStack>
-                    <Badge variant="subtle" bg="white/50" color="gray.700" borderRadius="full" px={3} py={1}>
-                        Всего: {topics.length}
-                    </Badge>
-                </Flex>
+                <Flex justify="space-between" align="center" mb={5} px={0}>
+                        <HStack gap={4}>
+                            <Center bg="blue.500" p={2} borderRadius="md" color="white" shadow="0 2px 4px rgba(0,0,0,0.1)">
+                                <FiDatabase size="18px" />
+                            </Center>
+                            <VStack align="start" gap={0}>
+                                <Heading size="sm" fontWeight="500" letterSpacing="-0.01em">
+                                    Управление топиками
+                                </Heading>
+                            </VStack>
+                        </HStack>
+                        <Badge  variant="subtle" bg="white/50" color="gray.700" borderRadius="full" px={3} py={1} textTransform="none" fontWeight="500" >
+                            Всего: {topics.length}
+                        </Badge>
+                    </Flex>
 
                 <VStack align="stretch" gap={4}>
                     <Grid 
@@ -132,39 +132,58 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                     </Flex>
 
                                     <Box bg="gray.100/50" px={2} py={1.5} borderRadius="md" mb={4}>
-                                        <Text fontSize="sm" color="gray.600" opacity={0.8}>
+                                        <Text fontSize="sm" color="gray.600" fontFamily="Segoe UI, system-ui" opacity={0.8}>
                                             {topic.Path_Topic}
                                         </Text> 
                                     </Box>
 
                                     <Grid templateColumns="1fr 1fr 1fr" gap={2} mb={4} justifyItems="center">
+                                        {/* Секция Координаты */}
                                         <VStack align="center" gap={0}>
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600">КООРДИНАТЫ</Text>
-                                            <Text fontSize="12px" fontWeight="600" color="gray.700">
-                                                {topic.Latitude_Topic}°<br/>{topic.Longitude_Topic}°
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
+                                                Координаты
+                                            </Text>
+                                            <Text fontSize="13px" fontWeight="600" color="gray.700" textAlign="center">
+                                                {topic.Latitude_Topic}° <br></br> {topic.Longitude_Topic}°
                                             </Text>
                                         </VStack>
-                                        <VStack align="center" gap={0} borderLeft="1px solid" borderColor="gray.200" w="full">
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600">АКТИВАЦИЯ</Text>
-                                            <Text fontSize="12px" fontWeight="600" color="teal.600">{topic.Altitude_Topic} м</Text>
+                                        {/* Секция Высота активации */}
+                                        <VStack align="center" gap={0} borderLeft="1px solid" borderColor="gray.200" width="100%">
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
+                                                Высота активации 
+                                            </Text>
+                                            <Text fontSize="13px" fontWeight="600" color="teal.600" textAlign="center" marginTop="1">
+                                                {topic.Altitude_Topic} м
+                                            </Text>
                                         </VStack>
-                                        <VStack align="center" gap={0} borderLeft="1px solid" borderColor="gray.200" w="full">
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600">ДАТЧИК</Text>
-                                            <Text fontSize="12px" fontWeight="600" color="blue.600">{topic.AltitudeSensor_Topic} м</Text>
+                                        {/* Секция Высота датчика */}
+                                        <VStack align="center" gap={0} borderLeft="1px solid" borderColor="gray.200" width="100%" >
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
+                                                Высота <br></br> датчика
+                                            </Text>
+                                            <Text fontSize="13px" fontWeight="600" color="blue.600" textAlign="center" marginTop="1">
+                                                {topic.AltitudeSensor_Topic} м
+                                            </Text>
                                         </VStack>
                                     </Grid>
 
                                     <Separator mb={3} opacity="0.4" />
 
                                     <Button 
-                                        size="sm" variant="ghost" w="full" h="32px"
+                                        size="sm" 
+                                        variant="ghost"  
+                                        w="full"
+                                        h="32px"
+                                        borderRadius="md"
+                                        fontSize="sm"
+                                        color="gray.600"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             onTopicDelete(topic.ID_Topic);
                                         }}
                                         _hover={{ bg: "red.50", color: "red.600" }}
                                     >
-                                        <FiTrash2 style={{ marginRight: '6px' }} size="14px" /> Удалить
+                                        <FiTrash2 style={{ marginRight: '6px' }} size="14px" /> Удалить топик
                                     </Button>
                                 </Box>
                             );
