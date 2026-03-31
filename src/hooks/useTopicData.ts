@@ -1,45 +1,35 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchTopicData } from '@/utils/api.ts';
 import { processCoordinatesToHull } from '@/utils/geoUtils.ts';
-import type { Feature, Polygon, MultiPolygon, GeoJsonProperties } from 'geojson';
-import { chartUtils } from '@/utils/chartUtils'; // Импортируем тип из утилит
+import { chartUtils } from '@/utils/chartUtils';
 import type { ChartDataNode, TopicApiResponse } from '@/utils/types';
-
+import { useEffect, useMemo } from 'react';
 
 export function useTopicData(selectedTopicId: number | null) {
-    const [mergedGeoJSON, setMergedGeoJSON] = useState<Feature<Polygon | MultiPolygon, GeoJsonProperties> | null>(null);
-    const [loadingTopicData, setLoadingTopicData] = useState<boolean>(false);
-    const [chartData, setChartData] = useState<ChartDataNode[]>([]);
+    const query = useQuery<TopicApiResponse>({
+        queryKey: ['topicData', selectedTopicId],
+        queryFn: async () => {
+            return await fetchTopicData(selectedTopicId!);
+        },
+        enabled: !!selectedTopicId,
+        refetchInterval: 10000,
+    });
 
-    const loadTopicData = useCallback(async () => {
-        if (!selectedTopicId) {
-            setMergedGeoJSON(null);
-            setChartData([]);
-            return;
+    const result = useMemo(() => {
+        const data = query.data;
+        if (!data) {
+            return { mergedGeoJSON: null, chartData: [] as ChartDataNode[] };
         }
 
-        const fetchData = async (): Promise<TopicApiResponse | null> => {
-            try {
-                setLoadingTopicData(true);
-                return await fetchTopicData(selectedTopicId);
-            } catch (err) {
-                console.error("Ошибка при загрузке данных топика:", err);
-                setLoadingTopicData(false);
-                return null;
-            }
-        };
+        console.log("Данные топика", data);
 
-        const data = await fetchData();
-
-        if (!data) return;
+        let processedChartData: ChartDataNode[] = [];
+        let processedGeoJSON = null;
 
         try {
-            const chartDataWithEMA = chartUtils(data);
-            setChartData(chartDataWithEMA);
+            processedChartData = chartUtils(data); 
         } catch (err) {
-            console.error("Ошибка при расчете данных для графика:", err);
-        } finally {
-            setLoadingTopicData(false);
+            console.error("Ошибка при обработке данных графика:", err);
         }
 
         try {
@@ -47,26 +37,30 @@ export function useTopicData(selectedTopicId: number | null) {
             if (rawCoordsString) {
                 console.log('Парсинг успешен:', data.Depression_AreaPoints);
                 console.log('Полигоны отображены с данными текущего топика');
-                const finalResult = processCoordinatesToHull(rawCoordsString);
-                setMergedGeoJSON(finalResult);
+                processedGeoJSON = processCoordinatesToHull(rawCoordsString);
             } else {
-                setMergedGeoJSON(null);
                 console.error('Depression_AreaPoints не является массивом после парсинга');
             }
         } catch (err) {
             console.error('Ошибка при парсинге Depression_AreaPoints:', err);
-            setMergedGeoJSON(null);
         }
-    }, [selectedTopicId]);
+
+        return {
+            mergedGeoJSON: processedGeoJSON,
+            chartData: processedChartData
+        };
+    }, [query.data]);
 
     useEffect(() => {
-        loadTopicData();
-
-        if (selectedTopicId) {
-            const interval = setInterval(loadTopicData, 10000);
-            return () => clearInterval(interval);
+        if (query.error) {
+            console.error("Ошибка при получении данных: ", query.error);
         }
-    }, [loadTopicData, selectedTopicId]);
+    }, [query.error]);
 
-    return { mergedGeoJSON, loadingTopicData, chartData };
+    return { 
+        mergedGeoJSON: result.mergedGeoJSON, 
+        loadingTopicData: query.isLoading, 
+        chartData: result.chartData,
+        error: query.error 
+    };
 }

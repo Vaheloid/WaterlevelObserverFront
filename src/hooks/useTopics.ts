@@ -1,39 +1,31 @@
+import { useQuery } from '@tanstack/react-query';
 import { fetchTopics } from '@/utils/api.ts';
 import type { Topic } from '@/utils/types.ts';
-import { useState, useEffect, useCallback } from 'react';
-
+import { useEffect } from 'react';
 
 export const useTopics = (enabled: boolean = false) => {
-    const [topics, setTopics] = useState<Topic[]>([]);
-    const [loading, setLoading] = useState(false);
-
-    const loadData = useCallback(async (isInitial = false) => {
-
-        if (isInitial) setLoading(true);
-
-        try {
-            const data = await fetchTopics();
-            setTopics(data);
-            console.log("Список топиков: ", data);
-        } catch (error) {
-            console.error("Ошибка при получении данных: ", error);
-        } finally {
-            if (isInitial) setLoading(false);
-        }
-    }, []);
+    const query = useQuery<Topic[]>({
+        queryKey: ['topics'],
+        queryFn: fetchTopics,
+        enabled: enabled,
+        refetchInterval: 10000,
+    });
 
     useEffect(() => {
-        if (!enabled) return;
-        loadData(true);
-        const intervalId = setInterval(() => {
-            loadData(false);
-            console.log("Список топиков обновлен");
-        }, 10000);
+        if (query.data) {
+            console.log("Список топиков: ", query.data);
+        }
+    }, [query.data]);
 
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, [enabled, loadData]);
+    useEffect(() => {
+        if (query.error) {
+            console.error("Ошибка при получении данных: ", query.error);
+        }
+    }, [query.error]);
 
-    return { topics, loading, loadData };
+    return { 
+        topics: query.data ?? [], 
+        loading: query.isLoading, 
+        loadData: query.refetch 
+    };
 };

@@ -82,11 +82,6 @@ export interface TopicDataItem {
     Value_Data: string;
 }
 
-export interface fetchTopicDataResponse {
-    Depression_AreaPoints?: string[];
-    Data: TopicDataItem[];
-}
-
 /**
  * Component Props
  */
@@ -98,13 +93,14 @@ export interface TopicsListProps {
     onTopicDelete: (id: number) => Promise<void>;
 }
 
+export type MergedGeoJSON = Feature<Polygon | MultiPolygon, GeoJsonProperties> | null;
 
 export interface MapProps {
     selectedTopicId: number | null;
     topics: Topic[];
     onMapClick?: (lat: number, lng: number) => void;
     isAdding?: boolean;
-    mergedGeoJSON: Feature<Polygon | MultiPolygon, GeoJsonProperties> | null;
+    mergedGeoJSON: MergedGeoJSON;
 }
 
 export interface TopicDeleteProps {

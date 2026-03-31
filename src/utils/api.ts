@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { fetchTopicDataResponse, Topic, FormValues, LoginResponse, TopicDeleteProps } from "@/utils/types.ts";
+import type { Topic, FormValues, LoginResponse, TopicDeleteProps, TopicApiResponse } from "@/utils/types.ts";
 
 const api = axios.create({
     baseURL: '/api',
@@ -17,8 +17,8 @@ export const fetchTopics = async (): Promise<Topic[]> => {
     return response.data;
 };
 
-export const fetchTopicData = async (id: number, limit: number = 25): Promise<fetchTopicDataResponse> => {
-    const response = await api.get<fetchTopicDataResponse>(`/topic_data?id_topic=${id}&limit=${limit}`);
+export const fetchTopicData = async (id: number, limit: number = 25): Promise<TopicApiResponse> => {
+    const response = await api.get<TopicApiResponse>(`/topic_data?id_topic=${id}&limit=${limit}`);
     return response.data;
 };
 
@@ -37,7 +37,6 @@ export const addTopic = async (topic: Topic): Promise<{ message: string }> => {
 };
 
 export const deleteTopic = async (id: number): Promise<TopicDeleteProps> => {
-    // Отправляем POST на /delete_topic с телом { id_topic: id }
     const response = await api.post('/delete_topic', { id_topic: id });
     return response.data;
 };

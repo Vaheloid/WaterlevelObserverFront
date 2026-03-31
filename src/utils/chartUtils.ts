@@ -34,7 +34,6 @@ export function chartUtils(data: TopicApiResponse): ChartDataNode[] {
     if (!data.Depression_AreaPoints || data.Depression_AreaPoints.length === 0) {
         console.warn("Нет данных для текущего топика");
     } else {
-        console.log("Данные топика", data);
         console.log("Средняя скользящая", emaCalculated);
         console.log("Диаграмма отображена с данными текущего топика");
     }

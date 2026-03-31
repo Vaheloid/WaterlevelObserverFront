@@ -6,7 +6,7 @@ export function RecenterMap({ lat, lng }: { lat: number; lng: number }) {
     useEffect(() => {
         if (lat && lng) {
             // animate: true для плавности или false для мгновенного прыжка
-            map.setView([lat, lng], 12 /*map.getZoom()*/, { animate: false });
+            map.setView([lat, lng], 12 /*map.getZoom()*/, { animate: true });
         }
     }, [lat, lng, map]);
     return null;
