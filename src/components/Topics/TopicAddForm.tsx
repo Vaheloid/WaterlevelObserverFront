@@ -149,12 +149,12 @@ export const TopicAddForm = ({ onSuccess, initialCoords }: TopicAddFormProps) =>
 
                 <Button 
                     type="submit" 
-                    bg="blue.600" 
+                    bg={{ base: "#0067c0", _dark: "#3182ce" }}
+                    _hover={{ bg: { base: "#005da1", _dark: "#4299e1" } }} 
                     color="white" 
                     w="full" 
                     mt={4}
                     loading={isSubmitting}
-                    _hover={{ bg: "blue.700" }}
                 >
                     Добавить топик
                 </Button>

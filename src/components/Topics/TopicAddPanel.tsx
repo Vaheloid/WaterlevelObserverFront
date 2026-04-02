@@ -47,7 +47,7 @@ export const TopicAddPanel = ({
                         outline: "none"
                     }}
                     _hover={{ 
-                        bg: "gray.100",
+                        bg: { base: "gray.100", _dark: "whiteAlpha.300" },
                         border: "none",
                         outline: "none",
                     }}
