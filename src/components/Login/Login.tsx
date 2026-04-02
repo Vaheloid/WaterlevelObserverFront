@@ -35,10 +35,10 @@ export default function Login() {
 	<LoginLayout>
 		<Stack gap="6">
 		<Box textAlign="center">
-			<Heading size="xl" fontWeight="semibold" color="gray.800">
+			<Heading size="xl" fontWeight="semibold" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>
 				Вход
 			</Heading>
-			<Text color="gray.600" fontSize="sm" mt="1">
+			<Text color={{ base: "gray.600", _dark: "whiteAlpha.700" }} fontSize="sm" mt="1">
 				Используйте свою учетную запись
 			</Text>
 		</Box>

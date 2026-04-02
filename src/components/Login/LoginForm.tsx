@@ -7,21 +7,21 @@ export const LoginForm = ({ onSubmit, isSubmitting, loginError }: LoginFormProps
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>()
 
     const inputStyles = {
-        bg: "whiteAlpha.600",
-        border: "1px solid",
-        borderColor: "blackAlpha.200",
+        bg: { base: "whiteAlpha.600", _dark: "whiteAlpha.100" },
         _focus: {
-            borderColor: "#0067c0",
-            boxShadow: "0 0 0 1px #0067c0"
-        },
-        borderRadius: "md"
+        // В темной теме синий лучше делать чуть светлее для контраста
+        borderColor: { base: "#0067c0", _dark: "#3182ce" }, 
+        boxShadow: { base: "0 0 0 1px #0067c0", _dark: "0 0 0 1px #3182ce" }
+    },
+        borderRadius: "md",
+        color: { base: "gray.800", _dark: "white" },
     }
 
     return (
     <form onSubmit={handleSubmit(onSubmit)}>
         <Stack gap="4">
         <Field.Root invalid={!!errors.login_user}>
-            <Field.Label fontWeight="medium">Логин</Field.Label>
+            <Field.Label fontWeight="medium" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Логин</Field.Label>
             <Input
             {...register("login_user", { required: "Обязательное поле" })}
             placeholder="Введите логин"
@@ -30,12 +30,13 @@ export const LoginForm = ({ onSubmit, isSubmitting, loginError }: LoginFormProps
             <Field.ErrorText>{errors.login_user?.message}</Field.ErrorText>
         </Field.Root>
 
-        <Field.Root invalid={!!errors.password_user}>
-            <Field.Label fontWeight="medium">Пароль</Field.Label>
+        <Field.Root invalid={!!errors.password_user} >
+            <Field.Label fontWeight="medium" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Пароль</Field.Label >
             <PasswordInput
             {...register("password_user", { required: "Обязательное поле" })}
             placeholder="Введите пароль"
             {...inputStyles}
+            color={{ base: "gray.800", _dark: "whiteAlpha.900" }}
             />
             <Field.ErrorText>{errors.password_user?.message}</Field.ErrorText>
         </Field.Root>
@@ -44,9 +45,9 @@ export const LoginForm = ({ onSubmit, isSubmitting, loginError }: LoginFormProps
             type="submit"
             loading={isSubmitting}
             width="full"
-            bg="#0067c0"
+            bg={{ base: "#0067c0", _dark: "#3182ce" }}
+            _hover={{ bg: { base: "#005da1", _dark: "#4299e1" } }}
             color="white"
-            _hover={{ bg: "#005da1" }}
             mt="2"
         >
             Войти

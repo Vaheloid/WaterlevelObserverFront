@@ -18,6 +18,7 @@ export default function MainPage() {
     const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null)
     const [isChartVisible, setIsChartVisible] = useState(false)
     const [clickedCoords, setClickedCoords] = useState<{lat: number, lng: number} | null>(null);
+    const [isSelectionDisabled, setIsSelectionDisabled] = useState(false); // НОВОЕ
     const { topics, loading, loadData } = useTopics(activePanel === "topics")
     const { chartData, mergedGeoJSON, } = useTopicData(selectedTopicId);
 
@@ -40,10 +41,19 @@ export default function MainPage() {
     };
 
     const handleTopicSelect = (id: number | null) => {
+        if (isSelectionDisabled) return;
         setSelectedTopicId(id)
         
         if (id !== null) {
-            setIsChartVisible(true)
+            setIsChartVisible(true);
+            
+            // ЗАПУСКАЕМ ТАЙМЕР ЗДЕСЬ
+            setIsSelectionDisabled(true);
+            setTimeout(() => {
+                setIsSelectionDisabled(false);
+            }, 5000);
+        } else {
+            setIsChartVisible(false);
         }
     }
 
@@ -113,6 +123,7 @@ export default function MainPage() {
                         onTopicDelete={handleTopicDelete} 
                         onClose={() => setActivePanel(null)}
                         isSidebarOpen={isSidebarOpen}
+                        isSelectionDisabled={isSelectionDisabled}
                     />
                 )}
 

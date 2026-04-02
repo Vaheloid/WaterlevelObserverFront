@@ -74,6 +74,7 @@ export interface TopicsPanelProps {
     topics: Topic[]
     loading: boolean
     isSidebarOpen: boolean
+    isSelectionDisabled: boolean
 }
 
 export interface TopicDataItem {
@@ -91,6 +92,7 @@ export interface TopicsListProps {
     selectedTopicId: number | null;
     onTopicSelect: (id: number | null) => void;
     onTopicDelete: (id: number) => Promise<void>;
+    isSelectionDisabled: boolean;
 }
 
 export type MergedGeoJSON = Feature<Polygon | MultiPolygon, GeoJsonProperties> | null;

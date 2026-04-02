@@ -55,20 +55,26 @@ export const TopicAddForm = ({ onSuccess, initialCoords }: TopicAddFormProps) =>
             <VStack gap={4} p={2}>
                 {/* Название топика */}
                 <Field.Root invalid={!!errors.Name_Topic}>
-                    <Field.Label>Название</Field.Label>
+                    <Field.Label color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Название</Field.Label>
                     <Input 
+                        bg= {{ base: "whiteAlpha.600", _dark: "whiteAlpha.100" }}
                         {...register("Name_Topic", { required: "Введите название" })} 
-                        placeholder="Введите название..." 
+                        placeholder="Введите название..."
+                        color={{ base: "gray.800", _dark: "whiteAlpha.800" }}
+                        borderColor={{ _dark: "whiteAlpha.400"}}
                     />
                     <Field.ErrorText>{errors.Name_Topic?.message}</Field.ErrorText>
                 </Field.Root>
 
                 {/* Путь или описание */}
                 <Field.Root invalid={!!errors.Path_Topic}>
-                    <Field.Label>Путь</Field.Label>
-                    <Input 
+                    <Field.Label color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Путь</Field.Label>
+                    <Input
+                        bg= {{ base: "whiteAlpha.600", _dark: "whiteAlpha.100" }}
                         {...register("Path_Topic", { required: "Введите путь" })} 
-                        placeholder="Введите путь..." 
+                        placeholder="Введите путь..."
+                        color={{ base: "gray.800", _dark: "whiteAlpha.800" }}
+                        borderColor={{ _dark: "whiteAlpha.400"}} 
                     />
                     <Field.ErrorText>{errors.Path_Topic?.message}</Field.ErrorText>
                 </Field.Root>
@@ -76,23 +82,29 @@ export const TopicAddForm = ({ onSuccess, initialCoords }: TopicAddFormProps) =>
                 {/* Координаты в ряд */}
                 <HStack w="full" gap={4} alignItems="flex-start">
                     <Field.Root invalid={!!errors.Latitude_Topic}>
-                        <Field.Label>Широта</Field.Label>
-                        <Input 
+                        <Field.Label color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Широта</Field.Label>
+                        <Input
+                            bg= {{ base: "whiteAlpha.600", _dark: "whiteAlpha.100" }}
                             type="string" 
                             step="any"
                             {...register("Latitude_Topic", { required: "Введите широту" })}
-                            placeholder="Нажмите на карту" 
+                            placeholder="Нажмите на карту"
+                            color={{ base: "gray.800", _dark: "whiteAlpha.800" }}
+                            borderColor={{ _dark: "whiteAlpha.400"}}
                         />
                         <Field.ErrorText>{errors.Latitude_Topic?.message}</Field.ErrorText>
                     </Field.Root>
 
                     <Field.Root invalid={!!errors.Longitude_Topic}>
-                        <Field.Label>Долгота</Field.Label>
-                        <Input 
+                        <Field.Label color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Долгота</Field.Label>
+                        <Input
+                            bg= {{ base: "whiteAlpha.600", _dark: "whiteAlpha.100" }}
                             type="string" 
                             step="any"
                             {...register("Longitude_Topic", { required: "Введите долготу" })}
                             placeholder="Нажмите на карту"
+                            color={{ base: "gray.800", _dark: "whiteAlpha.800" }}
+                            borderColor={{ _dark: "whiteAlpha.400"}}
                         />
                         <Field.ErrorText>{errors.Longitude_Topic?.message}</Field.ErrorText>
                     </Field.Root>
@@ -101,9 +113,12 @@ export const TopicAddForm = ({ onSuccess, initialCoords }: TopicAddFormProps) =>
                 {/* Высота */}
                 <HStack w="full" gap={4} alignItems="flex-start">
                     <Field.Root invalid={!!errors.Altitude_Topic}>
-                        <Field.Label>Высота активации</Field.Label>
-                        <Input 
+                        <Field.Label color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Высота активации</Field.Label>
+                        <Input
+                            bg= {{ base: "whiteAlpha.600", _dark: "whiteAlpha.100" }}
                             type="number" 
+                            color={{ base: "gray.800", _dark: "whiteAlpha.800" }}
+                            borderColor={{ _dark: "whiteAlpha.400"}}
                             {...register("Altitude_Topic", { required: "Введите высоту активации" })}
                             onWheel={(e) => {
                                 const step = 1;
@@ -115,9 +130,12 @@ export const TopicAddForm = ({ onSuccess, initialCoords }: TopicAddFormProps) =>
                     </Field.Root>
 
                     <Field.Root invalid={!!errors.AltitudeSensor_Topic}>
-                        <Field.Label>Высота датчика</Field.Label>
-                        <Input 
-                            type="number" 
+                        <Field.Label color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Высота датчика</Field.Label>
+                        <Input
+                            bg= {{ base: "whiteAlpha.600", _dark: "whiteAlpha.100" }}
+                            type="number"
+                            color={{ base: "gray.800", _dark: "whiteAlpha.800" }}
+                            borderColor={{ _dark: "whiteAlpha.400"}}
                             {...register("AltitudeSensor_Topic", { required: "Введите высоту датчика" })}
                             onWheel={(e) => {
                                 const step = 1;

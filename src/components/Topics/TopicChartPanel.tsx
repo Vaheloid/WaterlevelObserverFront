@@ -5,19 +5,22 @@ import type { TopicChartPanelProps } from "@/utils/types.ts"
 import { Chart, useChart } from "@chakra-ui/charts"
 import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, Legend } from "recharts"
 import { motion, AnimatePresence } from "framer-motion"
+import { useColorModeValue } from "../ui/color-mode"
 
 export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
-
+    const gridStroke = useColorModeValue("#e6e6e6", "rgba(255, 255, 255, 0.1)");
+    const LineFactGridStroke = useColorModeValue("#2B6CB0", "#016ada");
+    const LineAvgGridStroke = useColorModeValue("#38A169", "#32c579");
     const chart = useChart({
         data: chartData,
         series: [
-            { name: "value", label: "Фактическое значение", color: "#2B6CB0" },
-            { name: "ema", label: "Средняя скользящая", color: "#38A169" },
+            { name: "value", label: "Фактическое значение", color: LineFactGridStroke },
+            { name: "ema", label: "Средняя скользящая", color: LineAvgGridStroke },
         ],
     });
 
-    const sidebarWidth = isSidebarOpen ? 280 : 80;
+    const sidebarWidth = isSidebarOpen ? 280 : 70;
     const listWidth = isListOpen ? 400 + 10 : 0;
     const finalLeft = 10 + sidebarWidth + 10 + listWidth;
 
@@ -38,6 +41,8 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
         customTicks.push(i);
     }
 
+    
+
     return (
         <Box
             position="absolute"
@@ -45,12 +50,10 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
             left={`${finalLeft}px`}
             right="10px"
             height={isCollapsed ? "70px" : "350px"} 
-            bg="rgba(255, 255, 255, 0.7)"
+            bg={{ base: "rgba(255, 255, 255, 0.7)", _dark: "rgba(0, 0, 0, 0.7)" }}
             backdropFilter="blur(10px) saturate(180%)"
             borderRadius="2xl"
-            boxShadow="2xl"
-            border="1px solid"
-            borderColor="rgba(255, 255, 255, 0.3)"
+            
             zIndex={140}
             display="flex"
             flexDirection="column"
@@ -69,7 +72,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                         <FiTrendingUp size={16} />
                     </Center>
                     <VStack align="start" gap={0}>
-                        <Heading size="xs" textTransform="uppercase" color="gray.800">Уровень воды</Heading>
+                        <Heading size="xs" textTransform="uppercase" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Уровень воды</Heading>
                         <AnimatePresence>
                             {!isCollapsed && (
                                 <motion.div
@@ -77,7 +80,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                                     animate={{ opacity: 1, height: "auto" }}
                                     exit={{ opacity: 0, height: 0 }}
                                 >
-                                    <Text fontSize="xs" color="gray.600">{topic.Name_Topic}</Text>
+                                    <Text fontSize="xs" color={{ base: "gray.600", _dark: "whiteAlpha.700" }}>{topic.Name_Topic}</Text>
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -86,13 +89,34 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
 
                 <HStack gap={1}>
                     <IconButton
-                        bg="white"
+                        bg={{ base: "white", _dark: "whiteAlpha.100" }}
                         shadow="xs"
+                        color={{ base: "black", _dark: "white" }}
                         aria-label="Collapse"
                         variant="ghost"
                         size="sm"
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         borderRadius="full"
+                        border="0"
+                        outline="0"
+                        _focus={{
+                            outline: "none",
+                            border: "none"
+                        }}
+                        _focusVisible={{
+                            outline: "none",
+                            border: "none"
+                        }}
+                        _active={{
+                            outline: "none"
+                        }}
+                        _hover={{ 
+                            bg: { base: "gray.100", _dark: "whiteAlpha.300" },
+                            border: "none",
+                            outline: "none",
+                        }}
+
+                        onMouseDown={(e) => e.preventDefault()}
                     >
                         {isCollapsed ? <FiMaximize2 size={16} /> : <FiMinus size={18} />}
                     </IconButton>
@@ -107,21 +131,33 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                 visibility={isCollapsed ? "hidden" : "visible"}
                 opacity={isCollapsed ? 0 : 1}
                 transition="opacity 0.2s ease"
-                bg="rgba(255, 255, 255, 0.8)"
+                bg={{ base: "rgba(255, 255, 255, 0.8)", _dark: "rgba(0, 0, 0, 0.5)" }}
             >
             {!isCollapsed && (
-                <Chart.Root chart={chart} height="100%" width="100%">
-                    <LineChart data={chart.data} responsive margin={{ top: 0, right: 10, left: 25, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="4 4" stroke="#e6e6e6" />
+                <Chart.Root chart={chart} height="100%" width="100%" color= {{ base: "black", _dark: "white"}} 
+                    css={{
+                        "& text": {
+                            fill: { base: "gray.500", _dark:"whiteAlpha.800" }
+                        },
+                        "& .recharts-cartesian-axis-tick-value": {
+                            
+                        },
+                        "& *": {
+                            color: { _dark:"whiteAlpha.800" }
+                        }
+                    }}
+                >
+                    <LineChart data={chart.data} responsive margin={{ top: 0, right: 10, left: 25, bottom: 20 }} >
+                        <CartesianGrid strokeDasharray="4 4" stroke={gridStroke} />
                         <XAxis
                             axisLine={false}
-                            dataKey="time" 
-                            tick={{ fontSize: 10 }}
+                            dataKey="time"
+                            tick={{ fontSize: 10, fill: "#FF0000" }}
                             angle={-30}
                             textAnchor="end"
-                            height={50} 
+                            height={50}
                             stroke="#A0AEC0"
-                            interval={0} 
+                            interval={0}
                         />
                         <YAxis 
                             axisLine={false} 
@@ -132,11 +168,16 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                             domain={[roundedMin, roundedMax]} 
                             ticks={customTicks}
                         />
-                        <Tooltip animationDuration={100} content={<Chart.Tooltip />} />
+                        <Tooltip animationDuration={100} itemStyle={{ color: '#ffffff' }} labelStyle={{ color: '#ваш_цвет' }} content={<Chart.Tooltip />} />
                         <Legend
                             verticalAlign="top"
                             align="center"
-                            content={<Chart.Legend interaction="hover"/>}
+                            wrapperStyle={{ 
+                                color: "white", 
+                                fill: "white",
+                            }}
+                            content={<Chart.Legend interaction="hover"
+                            />}
                         />
                         
                         <Line
@@ -144,7 +185,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                             isAnimationActive={true}
                             type="natural"
                             dataKey="value"
-                            stroke="#2B6CB0"
+                            stroke={LineFactGridStroke}
                             strokeWidth={2}
                             dot={{ r: 3 }}
                             activeDot={{ r: 5 }}
@@ -155,7 +196,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                             isAnimationActive={true}
                             type="natural"
                             dataKey="ema"
-                            stroke="#38A169"
+                            stroke={LineAvgGridStroke}
                             strokeDasharray="5 5"
                             strokeWidth={2}
                             dot={false}

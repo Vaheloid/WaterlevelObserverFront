@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'; // Добавили useState и useEffect
 import { 
-    Badge, Box, Flex, Heading, Spinner, VStack, 
-    Text, Button, HStack, Center, Separator, Grid
+    Badge, Box, Flex, Spinner, VStack, 
+    Text, Button, HStack, Center, Separator, Grid,
+    Heading
 } from '@chakra-ui/react';
 import { 
     FiTrash2, FiActivity, 
@@ -9,37 +9,16 @@ import {
 } from 'react-icons/fi';
 import type { TopicsListProps, Topic } from '@/utils/types.ts';
 
-export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading }: TopicsListProps) {
-    // Локальное состояние блокировки
-    const [isSelectionDisabled, setIsSelectionDisabled] = useState(false);
-
-    // Очистка таймера при размонтировании компонента (хорошая практика)
-    useEffect(() => {
-        return () => {
-            // Если компонент закроется до истечения 5 секунд, таймер не вызовет ошибку
-        };
-    }, []);
+export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading, isSelectionDisabled }: TopicsListProps & { isSelectionDisabled: boolean }) {
 
     const handleTopicClick = (topic: Topic) => {
-        // 1. Если уже заблокировано — игнорируем клик
         if (isSelectionDisabled) return;
 
         const isDeselcting = selectedTopicId === topic.ID_Topic;
-
         if (isDeselcting) {
-            console.log("Отмена выбора топика:", topic.Name_Topic);
             onTopicSelect(null);
         } else {
-            console.log("Выбран топик: ", topic.Name_Topic);
             onTopicSelect(topic.ID_Topic);
-
-            // 2. Активируем блокировку только при ВЫБОРЕ (не при отмене)
-            setIsSelectionDisabled(true);
-
-            // 3. Запускаем таймер на 5 секунд
-            setTimeout(() => {
-                setIsSelectionDisabled(false);
-            }, 5000);
         }
     };
 
@@ -55,20 +34,20 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
         <Box w="full" p={4}>
             <Box maxW="1400px" mx="auto">
                 <Flex justify="space-between" align="center" mb={5} px={0}>
-                        <HStack gap={4}>
-                            <Center bg="blue.500" p={2} borderRadius="md" color="white" shadow="0 2px 4px rgba(0,0,0,0.1)">
-                                <FiDatabase size="18px" />
-                            </Center>
-                            <VStack align="start" gap={0}>
-                                <Heading size="sm" fontWeight="500" letterSpacing="-0.01em">
-                                    Управление топиками
-                                </Heading>
-                            </VStack>
-                        </HStack>
-                        <Badge  variant="subtle" bg="white/50" color="gray.700" borderRadius="full" px={3} py={1} textTransform="none" fontWeight="500" >
-                            Всего: {topics.length}
-                        </Badge>
-                    </Flex>
+                    <HStack gap={3}>
+                        <Center bg="blue.500" p={2} borderRadius="md" color="white" shadow="0 2px 4px rgba(0,0,0,0.1)">
+                            <FiDatabase size="18px" />
+                        </Center>
+                        <VStack align="start" gap={0}>
+                            <Heading fontSize="15px" fontWeight="500" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>
+                                Управление топиками
+                            </Heading>
+                        </VStack>
+                    </HStack>
+                    <Badge variant="subtle" bg={{ base: "white/50", _dark: "whiteAlpha.200" }} color={{ base: "gray.800", _dark: "whiteAlpha.900" }} borderRadius="full" px={3} py={1} textTransform="none" fontWeight="500" >
+                        Всего: {topics.length}
+                    </Badge>
+                </Flex>
 
                 <VStack align="stretch" gap={4}>
                     <Grid 
@@ -78,96 +57,118 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                     >
                         {topics.map((topic) => {
                             const isSelected = selectedTopicId === topic.ID_Topic;
-                            // ЗАМЫЛИВАНИЕ: если выбор заблокирован и это не текущий выбранный топик
                             const shouldBlur = isSelectionDisabled && !isSelected;
-
+                            
                             return (
                                 <Box
                                     key={topic.ID_Topic}
                                     p={4}
-                                    bg={isSelected ? "white" : "rgba(255, 255, 255, 0.8)"}
-                                    borderRadius="xl"
-                                    border="1px solid"
-                                    borderColor={isSelected ? "blue.500" : "gray.200/60"}
-                                    onClick={() => handleTopicClick(topic)}
                                     position="relative"
+                                    borderRadius="xl"
+                                    backdropFilter="blur(10px)"
+
+                                    bg={isSelected 
+                                        ? { base: "white", _dark: "blue.600" } 
+                                        : { base: "rgba(255, 255, 255, 0.7)", _dark: "whiteAlpha.200" }}
+                                    
+                                    transitionProperty="all"
+                                    transitionDuration="0.4s"
+                                    transitionTimingFunction="cubic-bezier(0.25, 1, 0.5, 1)"
+                                    willChange="transform, box-shadow, background-color"
+
+                                    _hover={!isSelectionDisabled ? {
+                                        bg: isSelected 
+                                            ? { base: "white", _dark: "blue.500" } 
+                                            : { base: "white", _dark: "whiteAlpha.300" },
+                                        shadow: "0 12px 24px rgba(0,0,0,0.15)",
+                                        transform: "translateY(-5px)",
+                                    } : {}}
+
+                                    _active={!isSelectionDisabled ? { transform: "scale(0.97)" } : {}}
+                                    
+                                    border={{ base: "1px solid", _dark: "none" }}
+                                    borderColor={{ base: "gray.200", _dark: "none" }}
+                                    outline="none"
+                                    boxShadow="none"
+                                    
+                                    css={{
+                                        "&:focus": { boxShadow: "none !important", outline: "none !important" },
+                                        "&:active": { boxShadow: "none !important", outline: "none !important" },
+                                        "-webkit-tap-highlight-color": "transparent",
+                                    }}
+
+                                    onClick={() => handleTopicClick(topic)}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    
                                     opacity={shouldBlur ? 0.4 : 1}
-                                    filter={shouldBlur ? "grayscale(0.8)" : "none"}
+                                    filter={shouldBlur ? "grayscale(0.8) blur(1px)" : "none"}
                                     cursor={isSelectionDisabled ? "not-allowed" : "pointer"}
-                                    transition="all 0.15s ease-out" 
-                                    _hover={
-                                        isSelectionDisabled 
-                                        ? { 
-                                            cursor: "not-allowed",
-                                            transform: "none",
-                                            shadow: "none"
-                                        } 
-                                        : { 
-                                            bg: "white",
-                                            borderColor: isSelected ? "blue.600" : "gray.300",
-                                            shadow: "0 4px 12px rgba(0,0,0,0.08)",
-                                            transform: "translateY(-2px)" 
-                                        }
-                                    }
                                 >
                                     {isSelected && (
-                                        <Box position="absolute" left="0" top="25%" bottom="25%" w="3px" bg="blue.500" borderRadius="full" />
+                                        <Box 
+                                            position="absolute" 
+                                            left="0" 
+                                            top="20%" 
+                                            bottom="20%" 
+                                            w="4px" 
+                                            bg={{ base: "blue.500", _dark: "white" }} 
+                                            borderRadius="full" 
+                                        />
                                     )}
 
                                     <Flex justify="space-between" align="start" mb={3}>
                                         <HStack gap={3}>
-                                            <Center bg={isSelected ? "blue.50" : "gray.100"} boxSize="40px" borderRadius="md" color={isSelected ? "blue.600" : "gray.600"}>
+                                            <Center 
+                                                transition="all 0.3s ease"
+                                                bg={isSelected ? { base: "blue.50", _dark: "whiteAlpha.300" } : { base: "gray.100", _dark: "whiteAlpha.50" }} 
+                                                boxSize="40px" 
+                                                borderRadius="md" 
+                                                color={isSelected ? { base: "blue.600", _dark: "white" } : { base: "gray.600", _dark: "whiteAlpha.800" }}
+                                            >
                                                 <FiActivity size="18px" />
                                             </Center> 
                                             <VStack align="start" gap={0}>
-                                                <Text fontWeight="600" fontSize="sm" color="gray.800" lineClamp={1}>
+                                                <Text fontWeight="600" fontSize="sm" color={isSelected ? { base: "gray.800", _dark: "white" } : { base: "gray.800", _dark: "whiteAlpha.900" }} lineClamp={1}>
                                                     {topic.Name_Topic}
                                                 </Text>
-                                                <Text fontSize="11px" color="gray.500" fontFamily="mono">
+                                                <Text fontSize="11px" color={isSelected ? { base: "gray.500", _dark: "whiteAlpha.700" } : "gray.500"} fontFamily="mono">
                                                     #ID:{topic.ID_Topic}
                                                 </Text>
                                             </VStack>
                                         </HStack>
-                                        <FiChevronRight color="#A0AEC0" />
+                                        <FiChevronRight color={isSelected ? "white" : "#A0AEC0"} />
                                     </Flex>
 
-                                    <Box bg="gray.100/50" px={2} py={1.5} borderRadius="md" mb={4}>
-                                        <Text fontSize="sm" color="gray.600" fontFamily="Segoe UI, system-ui" opacity={0.8}>
+                                    <Box bg={isSelected ? { base: "gray.100/50", _dark: "whiteAlpha.200" } : { base: "gray.100/50", _dark: "blackAlpha.300" }} px={2} py={1.5} borderRadius="md" mb={4}>
+                                        <Text fontSize="sm" color={isSelected ? { base: "gray.600", _dark: "whiteAlpha.900" } : { base: "gray.600", _dark: "whiteAlpha.700" }} fontFamily="Segoe UI, system-ui">
                                             {topic.Path_Topic}
                                         </Text> 
                                     </Box>
 
                                     <Grid templateColumns="1fr 1fr 1fr" gap={2} mb={4} justifyItems="center">
-                                        {/* Секция Координаты */}
                                         <VStack align="center" gap={0}>
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
-                                                Координаты
-                                            </Text>
-                                            <Text fontSize="13px" fontWeight="600" color="gray.700" textAlign="center">
-                                                {topic.Latitude_Topic}° <br></br> {topic.Longitude_Topic}°
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Координаты</Text>
+                                            <Text fontSize="13px" fontWeight="600" color={{ base: "gray.700", _dark: "whiteAlpha.900" }} textAlign="center">
+                                                {topic.Latitude_Topic}° <br/> {topic.Longitude_Topic}°
                                             </Text>
                                         </VStack>
-                                        {/* Секция Высота активации */}
+                                        
                                         <VStack align="center" gap={0} borderLeft="1px solid" borderColor="gray.200" width="100%">
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
-                                                Высота активации 
-                                            </Text>
-                                            <Text fontSize="13px" fontWeight="600" color="teal.600" textAlign="center" marginTop="1">
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Высота активации</Text>
+                                            <Text fontSize="13px" fontWeight="600" color={isSelected ? { base: "teal.500", _dark: "whiteAlpha.900"} : "teal.500"} textAlign="center" marginTop="1">
                                                 {topic.Altitude_Topic} м
                                             </Text>
                                         </VStack>
-                                        {/* Секция Высота датчика */}
+
                                         <VStack align="center" gap={0} borderLeft="1px solid" borderColor="gray.200" width="100%" >
-                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">
-                                                Высота <br></br> датчика
-                                            </Text>
-                                            <Text fontSize="13px" fontWeight="600" color="blue.600" textAlign="center" marginTop="1">
+                                            <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Высота <br/> датчика</Text>
+                                            <Text fontSize="13px" fontWeight="600" color={isSelected ? { base: "blue.500", _dark: "whiteAlpha.900"} : "blue.500"} textAlign="center" marginTop="1">
                                                 {topic.AltitudeSensor_Topic} м
                                             </Text>
                                         </VStack>
                                     </Grid>
 
-                                    <Separator mb={3} opacity="0.4" />
+                                    <Separator mb={3} opacity={isSelected ? "0.6" : "0.2"} borderColor="whiteAlpha.400" />
 
                                     <Button 
                                         size="sm" 
@@ -176,14 +177,34 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                         h="32px"
                                         borderRadius="md"
                                         fontSize="sm"
-                                        color="gray.600"
+                                        bg={{ base: "gray.50", _dark: "whiteAlpha.100" }}
+                                        color={{ base: "gray.600", _dark: "whiteAlpha.900" }}
+                                        
+                                        transition="all 0.3s ease"
+                                        
+                                        disabled={isSelectionDisabled} 
+                                        cursor={isSelectionDisabled ? "not-allowed" : "pointer"}
+                                        
+                                        _hover={!isSelectionDisabled ? { 
+                                            bg: "red.50",
+                                            color: "red.600",
+                                            transform: "scale(1.02)"
+                                        } : {
+                                            cursor: "not-allowed",
+                                            bg: { base: "gray.50", _dark: "whiteAlpha.100" }
+                                        }}
+
+                                        _focus={{ outline: "none", boxShadow: "none" }}
+                                        onMouseDown={(e) => e.preventDefault()}
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            onTopicDelete(topic.ID_Topic);
+                                            if (!isSelectionDisabled) {
+                                                onTopicDelete(topic.ID_Topic);
+                                            }
                                         }}
-                                        _hover={{ bg: "red.50", color: "red.600" }}
                                     >
-                                        <FiTrash2 style={{ marginRight: '6px' }} size="14px" /> Удалить топик
+                                        <FiTrash2 style={{ marginRight: '6px' }} size="14px" /> 
+                                        Удалить топик
                                     </Button>
                                 </Box>
                             );
