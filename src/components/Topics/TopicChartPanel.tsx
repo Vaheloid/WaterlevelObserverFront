@@ -71,7 +71,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                 position: "absolute",
                 bottom: "10px",
                 left: 0,
-                width: `calc(100vw - ${totalOffset + 30}px)`, 
+                width: `calc(100vw - ${totalOffset + 10}px)`, 
                 zIndex: 140,
                 display: "flex",
                 flexDirection: "column",
@@ -187,10 +187,10 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                                         domain={[roundedMin, roundedMax]} 
                                         ticks={customTicks} 
                                         axisLine={false} 
-                                        tickLine={false} 
+                                        tickLine={false}
                                         tick={{ fontSize: 10 }}
                                     />
-                                    <Tooltip content={<Chart.Tooltip />} isAnimationActive={false} cursor={false} />
+                                    <Tooltip animationDuration={100} content={<Chart.Tooltip />} cursor={true} />
                                     <Legend verticalAlign="top" content={<Chart.Legend interaction="hover" />} />
                                     
                                     {chart.series.map((item) => (
