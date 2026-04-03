@@ -4,7 +4,7 @@ import { FiTrendingUp, FiMinus, FiMaximize2 } from "react-icons/fi"
 import type { TopicChartPanelProps } from "@/utils/types.ts"
 import { Chart, useChart } from "@chakra-ui/charts"
 import { Line, LineChart, CartesianGrid, Tooltip, XAxis, YAxis, Legend } from "recharts"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useColorModeValue } from "@/components/ui/color-mode"
 
 export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }: TopicChartPanelProps) => {
@@ -18,16 +18,16 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
 
     useLayoutEffect(() => {
         if (!containerRef.current) return;
-
         const resizeObserver = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                const { width, height } = entry.contentRect;
-                if (width > 0 && height > 0) {
-                    setDimensions({ width, height });
+            window.requestAnimationFrame(() => {
+                for (const entry of entries) {
+                    const { width, height } = entry.contentRect;
+                    if (width > 0 && height > 0) {
+                        setDimensions({ width, height });
+                    }
                 }
-            }
+            });
         });
-
         resizeObserver.observe(containerRef.current);
         return () => resizeObserver.disconnect();
     }, []);
@@ -42,98 +42,133 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
 
     const sidebarWidth = isSidebarOpen ? 280 : 70;
     const listWidth = isListOpen ? 410 : 0;
-    const finalX = 10 + sidebarWidth + listWidth + 10;
+    const totalOffset = sidebarWidth + listWidth + 20;
 
     if (!topic) return null;
 
     const values = chartData.map(d => d.value).filter((v): v is number => v !== null);
-    const rawMin = values.length > 0 ? Math.min(...values) : 0;
-    const rawMax = values.length > 0 ? Math.max(...values) : 120;
-    const roundedMin = Math.floor((rawMin - 5) / 5) * 5;
-    const roundedMax = Math.ceil((rawMax + 15) / 5) * 5;
-    const customTicks = [];
-    for (let i = roundedMin; i <= roundedMax; i += 5) { customTicks.push(i); }
+    const roundedMin = Math.floor(((values.length > 0 ? Math.min(...values) : 0) - 5) / 5) * 5;
+    const roundedMax = Math.ceil(((values.length > 0 ? Math.max(...values) : 120) + 15) / 5) * 5;
+    const customTicks = Array.from({ length: (roundedMax - roundedMin) / 5 + 1 }, (_, i) => roundedMin + i * 5);
 
     return (
         <motion.div
-            initial={false}
+            initial={{ opacity: 0, x: totalOffset - 40, scale: 0.95 }}
             animate={{ 
-                x: finalX,
-                height: isCollapsed ? "70px" : "350px",
+                opacity: 1, 
+                x: totalOffset, 
+                scale: 1,
             }}
-            transition={{ type: "tween", ease: [0.4, 0, 0.2, 1], duration: 0.3 }}
+            exit={{ opacity: 0, x: totalOffset - 20, scale: 0.95 }}
+            transition={{ 
+                type: "spring", 
+                stiffness: 260, 
+                damping: 30,
+                mass: 0.8
+            }}
             style={{
                 position: "absolute",
                 bottom: "10px",
                 left: 0,
-                width: `calc(100vw - ${finalX + 10}px)`, 
+                width: `calc(100vw - ${totalOffset + 10}px)`, 
                 zIndex: 140,
-                willChange: "transform", 
+                display: "flex",
+                flexDirection: "column",
+                pointerEvents: "auto",
+                willChange: "transform, opacity",
+                backdropFilter: "blur(10px) saturate(180%)",
             }}
         >
             <Box
                 w="full"
-                h="full"
+                overflow="hidden"
+                transition="height 0.3s ease-in-out"
+                height={isCollapsed ? "70px" : "350px"}
                 bg={{ base: "rgba(255, 255, 255, 0.7)", _dark: "rgba(0, 0, 0, 0.7)" }}
                 backdropFilter="blur(10px) saturate(180%)"
                 borderRadius="2xl"
                 display="flex"
                 flexDirection="column"
-                overflow="hidden"
                 border="1px solid"
                 borderColor="whiteAlpha.200"
             >
+                {/* Header */}
                 <Flex p={4} align="center" justify="space-between" borderBottom={isCollapsed ? "none" : "1px solid"} borderColor="rgba(0, 0, 0, 0.05)">
                     <HStack gap={3}>
                         <Center bg="blue.500" p={2} borderRadius="lg" color="white">
                             <FiTrendingUp size={16} />
                         </Center>
                         <VStack align="start" gap={0}>
+            
                             <Heading size="xs" textTransform="uppercase" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Уровень воды</Heading>
-                            <AnimatePresence>
+                            
                                 {!isCollapsed && (
                                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
                                         <Text fontSize="xs" color={{ base: "gray.600", _dark: "whiteAlpha.700" }}>{topic.Name_Topic}</Text>
                                     </motion.div>
                                 )}
-                            </AnimatePresence>
+                            
                         </VStack>
                     </HStack>
 
                     <IconButton
-                        bg={{ base: "white", _dark: "whiteAlpha.100" }}
-                        shadow="xs" color={{ base: "black", _dark: "white" }}
-                        aria-label="Collapse" variant="ghost" size="sm"
+                        aria-label="Collapse"
+                        variant="ghost"
+                        size="sm"
+                        shadow="xs"
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         borderRadius="full"
-                        _hover={{ bg: { base: "gray.100", _dark: "whiteAlpha.300" } }}
-                    >
-                        {isCollapsed ? <FiMaximize2 size={16} /> : <FiMinus size={18} />}
+                        color={{ base: "black", _dark: "white" }} bg={{ base: "white", _dark: "whiteAlpha.100" }}
+                        border="0"
+                        outline="0"
+                        _focus={{
+                            outline: "none",
+                            border: "none"
+                        }}
+                        _focusVisible={{
+                            outline: "none",
+                            border: "none"
+                        }}
+                        _active={{
+                            outline: "none"
+                        }}
+                        _hover={{ 
+                            bg: { base: "gray.100", _dark: "whiteAlpha.300" },
+                            border: "none",
+                            outline: "none",
+                        }}
+                        >
+                        {isCollapsed ? <FiMaximize2 /> : <FiMinus />}
                     </IconButton>
                 </Flex>
 
+                {/* Chart Container */}
                 <Box 
                     ref={containerRef} 
                     flex="1" 
-                    p={4}
-                    position="relative"
-                    display={isCollapsed ? "none" : "block"}
+                    p={4} 
+                    position="relative" 
+                    opacity={isCollapsed ? 0 : 1}
+                    visibility={isCollapsed ? "hidden" : "visible"}
+                    transition="opacity 0.2s"
                     bg={{ base: "rgba(255, 255, 255, 0.8)", _dark: "rgba(0, 0, 0, 0.5)" }}
                 >
                     {!isCollapsed && dimensions.width > 0 && (
-                        <Box 
-                            position="absolute" 
-                            top="0" 
-                            left="0" 
-                            right="0" 
-                            bottom="0" 
-                            p={4}
-                        >
-                            <Chart.Root chart={chart} height="100%" width="100%">
+                        <Box position="absolute" inset={0} p={4} style={{ transform: 'translateZ(0)' }}>
+                            <Chart.Root chart={chart} height="100%" width="100%"css={{
+                                "& text": {
+                                    fill: { base: "gray.500", _dark:"whiteAlpha.800" }
+                                },
+                                
+                                "& *": {
+                                    color: { base: "gray.800",_dark:"whiteAlpha.800" }
+                                },
+
+                            }}>
                                 <LineChart 
-                                    width={dimensions.width}
+                                    width={dimensions.width} 
                                     height={dimensions.height} 
-                                    data={chart.data} 
+                                    data={chartData} 
                                     margin={{ top: 0, right: 10, left: 25, bottom: 20 }}
                                 >
                                     <CartesianGrid strokeDasharray="4 4" stroke={gridStroke} vertical={true} />
@@ -143,25 +178,17 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                                         tick={{ fontSize: 10 }} 
                                         angle={-30} 
                                         textAnchor="end" 
-                                        height={50}
+                                        height={50} 
                                         interval={0}
-                                        stroke={chart.color("border")}
                                     />
                                     <YAxis 
                                         domain={[roundedMin, roundedMax]} 
                                         ticks={customTicks} 
                                         axisLine={false} 
-                                        tickLine={false}
+                                        tickLine={false} 
                                         tick={{ fontSize: 10 }}
-                                        tickMargin={10}
-                                        stroke={chart.color("border")}
                                     />
-                                    <Tooltip 
-                                        content={<Chart.Tooltip />} 
-                                        isAnimationActive={false} 
-                                        cursor={false}
-                                        animationDuration={100}
-                                    />
+                                    <Tooltip content={<Chart.Tooltip />} isAnimationActive={false} cursor={false} />
                                     <Legend verticalAlign="top" content={<Chart.Legend interaction="hover" />} />
                                     
                                     {chart.series.map((item) => (
