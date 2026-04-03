@@ -53,7 +53,8 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
 
     return (
         <motion.div
-            initial={{ opacity: 0, x: totalOffset - 40, scale: 0.95 }}
+            custom={totalOffset}
+            initial={{ opacity: 0, x: totalOffset, scale: 0.95 }}
             animate={{ 
                 opacity: 1, 
                 x: totalOffset, 
@@ -62,21 +63,22 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
             exit={{ opacity: 0, x: totalOffset - 20, scale: 0.95 }}
             transition={{ 
                 type: "spring", 
-                stiffness: 260, 
-                damping: 30,
+                stiffness: 180, 
+                damping: 40,
                 mass: 0.8
             }}
             style={{
                 position: "absolute",
                 bottom: "10px",
                 left: 0,
-                width: `calc(100vw - ${totalOffset + 10}px)`, 
+                width: `calc(100vw - ${totalOffset + 30}px)`, 
                 zIndex: 140,
                 display: "flex",
                 flexDirection: "column",
                 pointerEvents: "auto",
                 willChange: "transform, opacity",
                 backdropFilter: "blur(10px) saturate(180%)",
+                borderRadius: "12px",
             }}
         >
             <Box

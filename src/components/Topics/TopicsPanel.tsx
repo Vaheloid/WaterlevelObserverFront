@@ -17,7 +17,7 @@ export const TopicsPanel = ({
     
     const sidebarWidth = isSidebarOpen ? 280 : 70;
     const currentLeft = 10 + sidebarWidth + 10;
-
+    
     return (
         <motion.div
             initial={{ 
