@@ -8,16 +8,19 @@ import {
     FiDatabase, FiChevronRight 
 } from 'react-icons/fi';
 import type { TopicsListProps, Topic } from '@/utils/types.ts';
+import { motion } from 'framer-motion';
 
 export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading, isSelectionDisabled }: TopicsListProps & { isSelectionDisabled: boolean }) {
 
     const handleTopicClick = (topic: Topic) => {
+        const isDeselcting = selectedTopicId === topic.ID_Topic;
         if (isSelectionDisabled) return;
 
-        const isDeselcting = selectedTopicId === topic.ID_Topic;
         if (isDeselcting) {
+            console.log("Отмена выбора топика:", topic.Name_Topic);
             onTopicSelect(null);
         } else {
+            console.log("Выбран топик: ", topic.Name_Topic);
             onTopicSelect(topic.ID_Topic);
         }
     };
@@ -61,6 +64,7 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                             
                             return (
                                 <Box
+                                as={motion.div}
                                     key={topic.ID_Topic}
                                     p={4}
                                     position="relative"
@@ -68,17 +72,16 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                     backdropFilter="blur(10px)"
 
                                     bg={isSelected 
-                                        ? { base: "white", _dark: "blue.600" } 
+                                        ? { base: "white", _dark: "blue.800" } 
                                         : { base: "rgba(255, 255, 255, 0.7)", _dark: "whiteAlpha.200" }}
                                     
                                     transitionProperty="all"
                                     transitionDuration="0.4s"
                                     transitionTimingFunction="cubic-bezier(0.25, 1, 0.5, 1)"
-                                    willChange="transform, box-shadow, background-color"
 
                                     _hover={!isSelectionDisabled ? {
                                         bg: isSelected 
-                                            ? { base: "white", _dark: "blue.500" } 
+                                            ? { base: "white", _dark: "blue.600" } 
                                             : { base: "white", _dark: "whiteAlpha.300" },
                                         shadow: "0 12px 24px rgba(0,0,0,0.15)",
                                         transform: "translateY(-5px)",
@@ -94,7 +97,7 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                     css={{
                                         "&:focus": { boxShadow: "none !important", outline: "none !important" },
                                         "&:active": { boxShadow: "none !important", outline: "none !important" },
-                                        "-webkit-tap-highlight-color": "transparent",
+                                        WebkitTapHighlightColor: "transparent"
                                     }}
 
                                     onClick={() => handleTopicClick(topic)}

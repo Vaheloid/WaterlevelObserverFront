@@ -11,6 +11,7 @@ import { TopicAddPanel } from "@/components/Topics/TopicAddPanel"
 import { TopicChartPanel } from "@/components/Topics/TopicChartPanel"
 import { deleteTopic } from "@/utils/api.ts"
 import { useTopicData } from "@/hooks/useTopicData.ts"
+import { AnimatePresence } from "framer-motion"
 
 export default function MainPage() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -46,8 +47,7 @@ export default function MainPage() {
         
         if (id !== null) {
             setIsChartVisible(true);
-            
-            // ЗАПУСКАЕМ ТАЙМЕР ЗДЕСЬ
+
             setIsSelectionDisabled(true);
             setTimeout(() => {
                 setIsSelectionDisabled(false);
@@ -113,9 +113,9 @@ export default function MainPage() {
                         mergedGeoJSON={mergedGeoJSON}
                     />
                 </Box>
-
+                <AnimatePresence>
                 {activePanel === "topics" && (
-                    <TopicsPanel 
+                    <TopicsPanel
                         topics={topics}
                         loading={loading}
                         selectedTopicId={selectedTopicId}
@@ -129,6 +129,7 @@ export default function MainPage() {
 
                 {isChartVisible && selectedTopicData && (
                     <TopicChartPanel 
+                        key={selectedTopicData.ID_Topic}
                         topic={selectedTopicData} 
                         chartData={chartData}
                         isListOpen={activePanel === "topics"}
@@ -155,6 +156,7 @@ export default function MainPage() {
                         />
                     </TopicAddPanel>
                 )}
+                </AnimatePresence>
             </Flex>
         </Flex>
     )
