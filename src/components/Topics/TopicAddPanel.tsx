@@ -44,6 +44,7 @@ export const TopicAddPanel = ({
                 pointerEvents: "auto",
                 willChange: "left, transform, opacity",
                 backdropFilter: "blur(10px) saturate(180%)",
+                borderRadius: "12px"
             }}
         >
             <Box
@@ -54,7 +55,6 @@ export const TopicAddPanel = ({
                 borderColor="gray.200"
                 maxH="calc(100vh - 20px)"
                 overflow="hidden"
-                boxShadow="xl"
             >
                 {/* Шапка панели */}
                 <Flex 

@@ -79,6 +79,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                 willChange: "transform, opacity",
                 backdropFilter: "blur(10px) saturate(180%)",
                 borderRadius: "12px",
+                
             }}
         >
             <Box
@@ -87,7 +88,6 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                 transition="height 0.3s ease-in-out"
                 height={isCollapsed ? "70px" : "350px"}
                 bg={{ base: "rgba(255, 255, 255, 0.7)", _dark: "rgba(0, 0, 0, 0.7)" }}
-                backdropFilter="blur(10px) saturate(180%)"
                 borderRadius="2xl"
                 display="flex"
                 flexDirection="column"
@@ -101,15 +101,12 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                             <FiTrendingUp size={16} />
                         </Center>
                         <VStack align="start" gap={0}>
-            
-                            <Heading size="xs" textTransform="uppercase" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Уровень воды</Heading>
-                            
-                                {!isCollapsed && (
-                                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
-                                        <Text fontSize="xs" color={{ base: "gray.600", _dark: "whiteAlpha.700" }}>{topic.Name_Topic}</Text>
-                                    </motion.div>
-                                )}
-                            
+                            <Heading size="xs" textTransform="uppercase" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>
+                                Уровень воды
+                            </Heading>
+                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+                                    <Text fontSize="xs" color={{ base: "gray.600", _dark: "whiteAlpha.700" }}>{topic.Name_Topic}</Text>
+                                </motion.div>
                         </VStack>
                     </HStack>
 

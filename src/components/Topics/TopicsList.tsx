@@ -72,7 +72,7 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                     backdropFilter="blur(10px)"
 
                                     bg={isSelected 
-                                        ? { base: "white", _dark: "blue.800" } 
+                                        ? { base: "white", _dark: "whiteAlpha.200" } 
                                         : { base: "rgba(255, 255, 255, 0.7)", _dark: "whiteAlpha.200" }}
                                     
                                     transitionProperty="all"
@@ -81,8 +81,8 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
 
                                     _hover={!isSelectionDisabled ? {
                                         bg: isSelected 
-                                            ? { base: "white", _dark: "blue.600" } 
-                                            : { base: "white", _dark: "whiteAlpha.300" },
+                                            ? { base: "white", _dark: "whiteAlpha.200" } 
+                                            : { base: "white", _dark: "whiteAlpha.200" },
                                         shadow: "0 12px 24px rgba(0,0,0,0.15)",
                                         transform: "translateY(-5px)",
                                     } : {}}
