@@ -1,31 +1,70 @@
+import { useState, useEffect, useRef, useCallback } from 'react'; // Добавлен useCallback
 import { useQuery } from '@tanstack/react-query';
 import { fetchTopics } from '@/utils/api.ts';
 import type { Topic } from '@/utils/types.ts';
-import { useEffect } from 'react';
 
 export const useTopics = (enabled: boolean = false) => {
+    const [topicsInterval, setTopicsInterval] = useState<number | false>(10000);
+    const [configCheckInterval, setConfigCheckInterval] = useState(30000);
+    
+    const configTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // 1. Объявляем загрузку конфига
+    const loadConfig = useCallback(async () => {
+        try {
+            const response = await fetch(`/config.json?t=${Date.now()}`);
+            if (!response.ok) throw new Error("Config not found");
+            const config = await response.json();
+            
+            setTopicsInterval(config.TOPICS_REFETCH_INTERVAL);
+            setConfigCheckInterval(config.CONFIG_CHECK_INTERVAL);
+        } catch (error) {
+            console.error("Ошибка загрузки конфига:", error);
+        } finally {
+            // Рекурсивный таймер
+            configTimerRef.current = setTimeout(loadConfig, configCheckInterval);
+        }
+    }, [configCheckInterval]);
+
+    // 2. Запускаем цикл проверки конфига
+    useEffect(() => {
+        loadConfig();
+        return () => {
+            if (configTimerRef.current) clearTimeout(configTimerRef.current);
+        };
+    }, [loadConfig]);
+
+    // 3. Объявляем основной запрос (ВАЖНО: до использования в useEffect ниже)
     const query = useQuery<Topic[]>({
         queryKey: ['topics'],
         queryFn: fetchTopics,
         enabled: enabled,
-        refetchInterval: 10000,
+        refetchInterval: topicsInterval,
+        refetchOnMount: true,
+        refetchOnWindowFocus: true
     });
+    console.log(query.data);
+    // Извлекаем refetch, чтобы использовать его как стабильную зависимость
+    const { refetch } = query;
 
+    // 4. Эффект для мгновенного обновления при смене интервала в конфиге
+    useEffect(() => {
+        if (enabled) {
+            refetch(); 
+        }
+        // Теперь все зависимости на месте и линтер будет молчать
+    }, [topicsInterval, enabled, refetch]);
+
+    // Логи для отладки
     useEffect(() => {
         if (query.data) {
-            console.log("Список топиков: ", query.data);
+            console.log("Данные обновлены:", query.data);
         }
     }, [query.data]);
 
-    useEffect(() => {
-        if (query.error) {
-            console.error("Ошибка при получении данных: ", query.error);
-        }
-    }, [query.error]);
-
     return { 
         topics: query.data ?? [], 
-        loading: query.isLoading, 
-        loadData: query.refetch 
+        loading: query.isLoading || query.isFetching, 
+        loadData: query.refetch
     };
 };

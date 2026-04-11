@@ -2,21 +2,11 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    
     <link rel="icon" href="./src/img/waterlevel_logo.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>(!)Waterlevel Observer</title>
   </head>
   <body>
-    <script>
-    const theme = localStorage.getItem('chakra-ui-color-mode') || 'system';
-    if (theme === 'system') {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
-    } else {
-      document.documentElement.dataset.theme = theme;
-    }
-  </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 </html>
