@@ -62,7 +62,7 @@ export default function MainPage() {
      */
     const handleTopicDelete = async (id: number) => {
         try {
-            deleteTopic(id);
+            await deleteTopic(id);
             await loadData();
             console.log(`Топик удален: ${id}`);
             
@@ -92,7 +92,7 @@ export default function MainPage() {
         }
     }
 
-    const selectedTopicData = topics.find(t => t.ID_Topic === selectedTopicId) || null
+    const selectedTopicData = topics.find(t => t.id_topic === selectedTopicId) || null
 
     return (
         <Flex h="100vh" w="100vw" overflow="hidden" bg="gray.50">
@@ -129,7 +129,7 @@ export default function MainPage() {
 
                 {isChartVisible && selectedTopicData && (
                     <TopicChartPanel 
-                        key={selectedTopicData.ID_Topic}
+                        key={selectedTopicData.id_topic}
                         topic={selectedTopicData} 
                         chartData={chartData}
                         isListOpen={activePanel === "topics"}

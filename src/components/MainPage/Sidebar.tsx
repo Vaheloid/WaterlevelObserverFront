@@ -94,7 +94,7 @@ export const Sidebar = ({ isOpen, onToggle, activePanel, onPanelToggle }: Sideba
                     </VStack>
 
                     <Spacer />
-
+                            
                     <NavButton
                         icon={colorMode === "light" ? <Moon size={24} color="currentColor" /> : <Sun size={24} color="currentColor" />}
                         color={iconColor}

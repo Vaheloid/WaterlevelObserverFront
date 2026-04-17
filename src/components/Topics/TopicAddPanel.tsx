@@ -76,7 +76,8 @@ export const TopicAddPanel = ({
                         </Heading>
                     </HStack>
                     
-                    <Button 
+                    <Button
+                        borderRadius="lg"
                         variant="ghost" 
                         shadow="xs" 
                         size="sm" 

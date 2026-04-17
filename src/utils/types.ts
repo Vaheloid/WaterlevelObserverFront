@@ -27,13 +27,13 @@ export interface LoginLayoutProps {
  * Data Types
  */
 export interface Topic {
-    ID_Topic: number;
-    Name_Topic: string;
-    Path_Topic: string; 
-    Latitude_Topic: number;
-    Longitude_Topic: number;
-    Altitude_Topic: number; 
-    AltitudeSensor_Topic: number;
+    id_topic: number;
+    name_topic: string;
+    path_topic: string; 
+    latitude_topic: number;
+    longitude_topic: number;
+    altitude_topic: number; 
+    altitudeSensor_topic: number;
 }
 
 export interface TopicAddFormProps {
@@ -55,12 +55,30 @@ export interface TopicChartPanelProps {
     isSidebarOpen: boolean
 }
 
-export interface TopicApiResponse {
-    Data: TopicDataItem[];
-    Depression_AreaPoints?: string[];
+/**
+ * Тип ответа для данных графика
+ * Эндпоинт: /api-mqtt/data/topics/{id}/data
+ */
+export type TopicDataResponse = TopicDataItem[];
+
+/**
+ * Тип для координат полигона (из эндпоинта /points)
+ * Эндпоинт: /api-mqtt/data/topics/{id}/points
+ * Ожидается формат: [[lat, lon], [lat, lon], ...]
+ */
+export type TopicPointsResponse = [number, number][];
+
+/**
+ * Если вам все еще нужен общий интерфейс (например, для состояния в React),
+ * можно использовать объединяющий тип:
+ */
+export interface TopicFullState {
+    chartData: TopicDataItem[];
+    geoPoints: TopicPointsResponse;
 }
 
 export interface ChartDataNode {
+    displayTime: string;
     time: string;
     value: number | null;
     ema: number | null;
@@ -78,9 +96,9 @@ export interface TopicsPanelProps {
 }
 
 export interface TopicDataItem {
-    ID_Data: number;
-    Time_Data: number;
-    Value_Data: string;
+    id_data: number;
+    value_data: string;
+    time_data: number;
 }
 
 /**
@@ -124,14 +142,11 @@ export interface SidebarProps {
     onPanelToggle: (panel: "topics" | "add") => void;
 }
 
-export interface DataPoint {
-    Value_Data: string;
-    Time_Data: number;
-}
+export type DataPoint = TopicDataItem;
 
 export interface ProcessedDataPoint {
-    Value_Data: number | null;
-    Time_Data: number;
+    value_data: number | null;
+    time_data: number;
 }
 
 export type Point = [number, number];

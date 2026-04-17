@@ -34,7 +34,7 @@ function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number
 
 
 export default function Map({ selectedTopicId, topics, onMapClick, isAdding, mergedGeoJSON }: MapProps) {
-    const currentTopicInfo = topics.find(t => t.ID_Topic === selectedTopicId);
+    const currentTopicInfo = topics.find(t => t.id_topic === selectedTopicId);
 
     return (
         <MapContainer 
@@ -53,8 +53,8 @@ export default function Map({ selectedTopicId, topics, onMapClick, isAdding, mer
             {/* Центрирование */}
             {currentTopicInfo && (
                 <RecenterMap 
-                    lat={currentTopicInfo.Latitude_Topic} 
-                    lng={currentTopicInfo.Longitude_Topic} 
+                    lat={currentTopicInfo.latitude_topic} 
+                    lng={currentTopicInfo.longitude_topic} 
                 />
             )}
 
@@ -74,10 +74,10 @@ export default function Map({ selectedTopicId, topics, onMapClick, isAdding, mer
 
             {/* Маркер */}
             {topics && topics.length > 0 && topics.map((topic) => (
-                <Marker key={topic.ID_Topic} position={[topic.Latitude_Topic, topic.Longitude_Topic]}>
-                    <Popup>{topic.Name_Topic}</Popup>
+                <Marker key={topic.id_topic} position={[topic.latitude_topic, topic.longitude_topic]}>
+                    <Popup>{topic.name_topic}</Popup>
                     <Tooltip>
-                        {topic.Name_Topic}
+                        {topic.name_topic}
                     </Tooltip>
                 </Marker>
                 

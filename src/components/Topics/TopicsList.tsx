@@ -1,27 +1,40 @@
 import { 
     Badge, Box, Flex, Spinner, VStack, 
     Text, Button, HStack, Center, Separator, Grid,
-    Heading
+    Heading,
+    Dialog,
+    Portal,
 } from '@chakra-ui/react';
 import { 
     FiTrash2, FiActivity, 
     FiDatabase, FiChevronRight 
 } from 'react-icons/fi';
+
+
 import type { TopicsListProps, Topic } from '@/utils/types.ts';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading, isSelectionDisabled }: TopicsListProps & { isSelectionDisabled: boolean }) {
-
+    // Состояние для хранения топика, который планируется удалить
+    const [topicToDelete, setTopicToDelete] = useState<Topic | null>(null);
     const handleTopicClick = (topic: Topic) => {
-        const isDeselcting = selectedTopicId === topic.ID_Topic;
+        const isDeselcting = selectedTopicId === topic.id_topic;
         if (isSelectionDisabled) return;
 
         if (isDeselcting) {
-            console.log("Отмена выбора топика:", topic.Name_Topic);
+            console.log("Отмена выбора топика:", topic.name_topic);
             onTopicSelect(null);
         } else {
-            console.log("Выбран топик: ", topic.Name_Topic);
-            onTopicSelect(topic.ID_Topic);
+            console.log("Выбран топик: ", topic.name_topic);
+            onTopicSelect(topic.id_topic);
+        }
+    };
+
+    const confirmDelete = () => {
+        if (topicToDelete) {
+            onTopicDelete(topicToDelete.id_topic);
+            setTopicToDelete(null);
         }
     };
 
@@ -35,6 +48,42 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
 
     return (
         <Box w="full" p={4}>
+
+            {/* --- ДИАЛОГ ПОДТВЕРЖДЕНИЯ --- */}
+            <Dialog.Root 
+                open={!!topicToDelete} 
+                onOpenChange={(e) => { if (!e.open) setTopicToDelete(null) }}
+                size="lg"
+                placement="center"
+            >
+                <Portal>
+                    <Dialog.Backdrop/>
+                    <Dialog.Positioner>
+                        <Dialog.Content css={{ borderRadius: '12px' }}>
+                            <Dialog.Header>
+                                <Dialog.Title color={{ base: "black", _dark: "white" }}>
+                                    Подтверждение удаления
+                                </Dialog.Title>
+                            </Dialog.Header>
+                            <Dialog.Body>
+                                <Text color={{ base: "black", _dark: "white" }}>
+                                    Вы действительно хотите удалить топик <strong>{topicToDelete?.name_topic}</strong>?
+                                    Это действие необратимо.
+                                </Text>
+                            </Dialog.Body>
+                            <Dialog.Footer>
+                                <Dialog.ActionTrigger asChild>
+                                    <Button variant="outline">Отмена</Button>
+                                </Dialog.ActionTrigger>
+                                <Button colorPalette="red" onClick={confirmDelete}>
+                                    Удалить
+                                </Button>
+                            </Dialog.Footer>
+                        </Dialog.Content>
+                    </Dialog.Positioner>
+                </Portal>
+            </Dialog.Root>
+
             <Box maxW="1400px" mx="auto">
                 <Flex justify="space-between" align="center" mb={5} px={0}>
                     <HStack gap={3}>
@@ -59,13 +108,13 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                         justifyContent="center" 
                     >
                         {topics.map((topic) => {
-                            const isSelected = selectedTopicId === topic.ID_Topic;
+                            const isSelected = selectedTopicId === topic.id_topic;
                             const shouldBlur = isSelectionDisabled && !isSelected;
                             
                             return (
                                 <Box
                                 as={motion.div}
-                                    key={topic.ID_Topic}
+                                    key={topic.id_topic}
                                     p={4}
                                     position="relative"
                                     borderRadius="xl"
@@ -132,10 +181,10 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                             </Center> 
                                             <VStack align="start" gap={0}>
                                                 <Text fontWeight="600" fontSize="sm" color={isSelected ? { base: "gray.800", _dark: "white" } : { base: "gray.800", _dark: "whiteAlpha.900" }} lineClamp={1}>
-                                                    {topic.Name_Topic}
+                                                    {topic.name_topic}
                                                 </Text>
                                                 <Text fontSize="11px" color={isSelected ? { base: "gray.500", _dark: "whiteAlpha.700" } : "gray.500"} fontFamily="mono">
-                                                    #ID:{topic.ID_Topic}
+                                                    #ID:{topic.id_topic}
                                                 </Text>
                                             </VStack>
                                         </HStack>
@@ -144,7 +193,7 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
 
                                     <Box bg={isSelected ? { base: "gray.100/50", _dark: "whiteAlpha.200" } : { base: "gray.100/50", _dark: "blackAlpha.300" }} px={2} py={1.5} borderRadius="md" mb={4}>
                                         <Text fontSize="sm" color={isSelected ? { base: "gray.600", _dark: "whiteAlpha.900" } : { base: "gray.600", _dark: "whiteAlpha.700" }} fontFamily="Segoe UI, system-ui">
-                                            {topic.Path_Topic}
+                                            {topic.path_topic}
                                         </Text> 
                                     </Box>
 
@@ -152,21 +201,21 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                         <VStack align="center" gap={0}>
                                             <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Координаты</Text>
                                             <Text fontSize="13px" fontWeight="600" color={{ base: "gray.700", _dark: "whiteAlpha.900" }} textAlign="center">
-                                                {topic.Latitude_Topic}° <br/> {topic.Longitude_Topic}°
+                                                {topic.latitude_topic.toFixed(6)}° <br/> {topic.longitude_topic.toFixed(6)}°
                                             </Text>
                                         </VStack>
                                         
                                         <VStack align="center" gap={0} borderLeft="1px solid" borderColor="gray.200" width="100%">
                                             <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Высота активации</Text>
                                             <Text fontSize="13px" fontWeight="600" color={isSelected ? { base: "teal.500", _dark: "whiteAlpha.900"} : "teal.500"} textAlign="center" marginTop="1">
-                                                {topic.Altitude_Topic} м
+                                                {topic.altitude_topic} м
                                             </Text>
                                         </VStack>
 
                                         <VStack align="center" gap={0} borderLeft="1px solid" borderColor="gray.200" width="100%" >
                                             <Text fontSize="10px" color="gray.400" fontWeight="600" textTransform="uppercase">Высота <br/> датчика</Text>
                                             <Text fontSize="13px" fontWeight="600" color={isSelected ? { base: "blue.500", _dark: "whiteAlpha.900"} : "blue.500"} textAlign="center" marginTop="1">
-                                                {topic.AltitudeSensor_Topic} м
+                                                {topic.altitudeSensor_topic} м
                                             </Text>
                                         </VStack>
                                     </Grid>
@@ -202,13 +251,15 @@ export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopic
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             if (!isSelectionDisabled) {
-                                                onTopicDelete(topic.ID_Topic);
+                                                setTopicToDelete(topic); // Открываем диалог
                                             }
                                         }}
                                     >
                                         <FiTrash2 style={{ marginRight: '6px' }} size="14px" /> 
                                         Удалить топик
                                     </Button>
+
+                                    
                                 </Box>
                             );
                         })}

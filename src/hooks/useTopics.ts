@@ -43,7 +43,6 @@ export const useTopics = (enabled: boolean = false) => {
         refetchOnMount: true,
         refetchOnWindowFocus: true
     });
-    console.log(query.data);
     // Извлекаем refetch, чтобы использовать его как стабильную зависимость
     const { refetch } = query;
 
@@ -58,7 +57,7 @@ export const useTopics = (enabled: boolean = false) => {
     // Логи для отладки
     useEffect(() => {
         if (query.data) {
-            console.log("Данные обновлены:", query.data);
+            console.log("Данные списка топиков обновлены:", query.data);
         }
     }, [query.data]);
 

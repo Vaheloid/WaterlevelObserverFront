@@ -31,7 +31,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
         resizeObserver.observe(containerRef.current);
         return () => resizeObserver.disconnect();
     }, []);
-
+    
     const chart = useChart({
         data: chartData,
         series: [
@@ -39,7 +39,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
             { name: "ema", label: "Средняя скользящая", color: LineAvgGridStroke },
         ],
     });
-
+    
     const sidebarWidth = isSidebarOpen ? 280 : 70;
     const listWidth = isListOpen ? 410 : 0;
     const totalOffset = sidebarWidth + listWidth + 20;
@@ -105,7 +105,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                                 Уровень воды
                             </Heading>
                                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
-                                    <Text fontSize="xs" color={{ base: "gray.600", _dark: "whiteAlpha.700" }}>{topic.Name_Topic}</Text>
+                                    <Text fontSize="xs" color={{ base: "gray.600", _dark: "whiteAlpha.700" }}>{topic.name_topic}</Text>
                                 </motion.div>
                         </VStack>
                     </HStack>
@@ -116,7 +116,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                         size="sm"
                         shadow="xs"
                         onClick={() => setIsCollapsed(!isCollapsed)}
-                        borderRadius="full"
+                        borderRadius="lg"
                         color={{ base: "black", _dark: "white" }} bg={{ base: "white", _dark: "whiteAlpha.100" }}
                         border="0"
                         outline="0"
@@ -171,7 +171,13 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                                     margin={{ top: 0, right: 10, left: 25, bottom: 20 }}
                                 >
                                     <CartesianGrid strokeDasharray="4 4" stroke={gridStroke} vertical={true} />
-                                    <XAxis 
+                                    <XAxis
+                                        tickFormatter={(tick, index) => {
+                                            // Находим в массиве данных объект по этому индексу или ключу
+                                            // и возвращаем только красивое время
+                                            const dataNode = chartData[index];
+                                            return dataNode ? dataNode.displayTime : tick;
+                                        }}
                                         dataKey="time" 
                                         axisLine={false} 
                                         tick={{ fontSize: 10 }} 
@@ -194,7 +200,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                                         <Line
                                             key={item.name}
                                             type="natural"
-                                            dataKey={chart.key(item.name)}
+                                            dataKey={item.name}
                                             stroke={chart.color(item.color)}
                                             strokeWidth={2}
                                             dot={item.name === "value" ? { r: 3 } : false}
