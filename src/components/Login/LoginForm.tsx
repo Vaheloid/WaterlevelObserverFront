@@ -21,7 +21,7 @@ export const LoginForm = ({ onSubmit, isSubmitting, loginError }: LoginFormProps
         <form onSubmit={handleSubmit(onSubmit)}>
             <Stack gap="4">
                 <Field.Root invalid={!!errors.login_user}>
-                    <Field.Label fontWeight="medium">Логин</Field.Label>
+                    <Field.Label fontWeight="medium" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>Логин</Field.Label>
                         <Input
                             {...register("login_user", { required: "Обязательное поле" })}
                             {...inputStyles}
