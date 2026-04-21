@@ -1,0 +1,87 @@
+import { Marker, Popup, GeoJSON, Tooltip, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+
+import type { MapProps } from "@/shared/types/types";
+import { RecenterMap } from "@/shared/lib/mapUtils";
+import { lazy } from "react";
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const MapContainer = lazy(() =>
+  import("react-leaflet").then((module) => ({ default: module.MapContainer }))
+);
+const TileLayer = lazy(() =>
+  import("react-leaflet").then((module) => ({ default: module.TileLayer }))
+);
+
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
+
+function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
+    useMapEvents({
+        click(e) {
+            onMapClick(e.latlng.lat, e.latlng.lng);
+        },
+    });
+    return null;
+}
+
+
+
+export default function Map({ selectedTopicId, topics, onMapClick, isAdding, mergedGeoJSON }: MapProps) {
+    const currentTopicInfo = topics.find(t => t.id_topic === selectedTopicId);
+
+    return (
+        <MapContainer 
+            style={{ height: "100vh", width: "100%" }} 
+            center={[54.735141, 55.958726]} 
+            zoom={12}
+            zoomControl={false} 
+            attributionControl={false}
+            preferCanvas={true}
+        >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+            {/* Активируем обработчик кликов только в режиме добавления */}
+            {isAdding && onMapClick && <MapClickHandler onMapClick={onMapClick} />}
+
+            {/* Центрирование */}
+            {currentTopicInfo && (
+                <RecenterMap 
+                    lat={currentTopicInfo.latitude_topic} 
+                    lng={currentTopicInfo.longitude_topic} 
+                />
+            )}
+
+            {/* Полигон из кастомного хука */}
+            {mergedGeoJSON && (
+                <GeoJSON 
+                    key={JSON.stringify(mergedGeoJSON)} 
+                    data={mergedGeoJSON}
+                    style={{
+                        color: 'red',
+                        fillColor: '#ff6363',
+                        fillOpacity: 0.25,
+                        weight: 1.1
+                    }}
+                />
+            )}
+
+            {/* Маркер */}
+            {topics && topics.length > 0 && topics.map((topic) => (
+                <Marker key={topic.id_topic} position={[topic.latitude_topic, topic.longitude_topic]}>
+                    <Popup>{topic.name_topic}</Popup>
+                    <Tooltip>
+                        {topic.name_topic}
+                    </Tooltip>
+                </Marker>
+                
+            ))}
+        </MapContainer>
+    );
+}
