@@ -81,7 +81,15 @@ export const TopicsPanel = ({
                     ТОПИКИ
                     </Heading>
                 </HStack>
-                <Button borderRadius="lg" variant="ghost" shadow="xs" size="sm" onClick={onClose} p={0} color={{ base: "black", _dark: "white" }} bg={{ base: "white", _dark: "whiteAlpha.100" }}
+                <Button 
+                    borderRadius="lg" 
+                    variant="ghost" 
+                    shadow="xs" 
+                    size="sm" 
+                    onClick={onClose} 
+                    p={0} 
+                    color={{ base: "black", _dark: "white" }} 
+                    bg={{ base: "white", _dark: "whiteAlpha.100" }}
                     border="0"
                     outline="0"
                     _focus={{

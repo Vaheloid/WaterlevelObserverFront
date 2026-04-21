@@ -17,9 +17,9 @@ export default function Login() {
 	const handleLogin = async (data: FormValues) => {
 		setIsSubmitting(true)
 		setLoginError(null)
+
 		try {
-			const userData = await loginUser(data)
-			console.log("User ID:", userData.user_id);
+			await loginUser(data)
 			navigate("/main")
 			reset()
 		} 
@@ -32,29 +32,29 @@ export default function Login() {
 	}
 
 	return (
-	<LoginLayout>
-		<Stack gap="6">
-		<Box textAlign="center">
-			<Heading size="xl" fontWeight="semibold" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>
-				Вход
-			</Heading>
-			<Text color={{ base: "gray.600", _dark: "whiteAlpha.700" }} fontSize="sm" mt="1">
-				Используйте свою учетную запись
-			</Text>
-		</Box>
+		<LoginLayout>
+			<Stack gap="6">
+				<Box textAlign="center">
+					<Heading size="xl" fontWeight="semibold" color={{ base: "gray.800", _dark: "whiteAlpha.900" }}>
+						Вход
+					</Heading>
+					<Text color={{ base: "gray.600", _dark: "whiteAlpha.700" }} fontSize="sm" mt="1">
+						Используйте свою учетную запись
+					</Text>
+				</Box>
 
-		<LoginForm 
-			onSubmit={handleLogin} 
-			isSubmitting={isSubmitting} 
-			loginError={loginError} 
-		/>
+				<LoginForm 
+					onSubmit={handleLogin} 
+					isSubmitting={isSubmitting} 
+					loginError={loginError} 
+				/>
 
-		<Center>
-			<Text fontSize="xs" color="gray.500">
-			© 2026 П3 Солюшенс
-			</Text>
-		</Center>
-		</Stack>
-	</LoginLayout>
+				<Center>
+					<Text fontSize="xs" color="gray.500">
+						2026 П3 Солюшенс
+					</Text>
+				</Center>
+			</Stack>
+		</LoginLayout>
 	)
 }
