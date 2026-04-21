@@ -1,8 +1,8 @@
 import { Box, Flex, HStack, Button, Heading } from "@chakra-ui/react"
 import { BarChart3, X } from "lucide-react"
 import { motion } from "framer-motion"
-import TopicsList from "./TopicsList"
 import type { TopicsPanelProps } from "@/shared/types/types";
+import { TopicsList } from "@/widgets";
 
 export const TopicsPanel = ({ 
     onClose, 

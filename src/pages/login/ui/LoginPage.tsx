@@ -3,9 +3,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from "react-hook-form"
 import type { FormValues } from "@/shared/types/types"
-import { loginUser } from "@/shared/api/api"
-import { LoginLayout } from "@/shared/ui/layouts/LoginLayout"
-import { LoginForm } from "@/features/auth-by-login/ui/LoginForm"
+import { loginUser } from "@/shared"
+import { LoginForm, LoginLayout } from "@/features"
 
 
 export default function Login() {

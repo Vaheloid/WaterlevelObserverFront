@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'; // Добавлен useCallback
 import { useQuery } from '@tanstack/react-query';
-import { fetchTopics } from '@/shared/api/api';
+import { fetchTopics } from '@/shared';
 import type { Topic } from '@/shared/types/types';
 
 export const useTopics = (enabled: boolean = false) => {

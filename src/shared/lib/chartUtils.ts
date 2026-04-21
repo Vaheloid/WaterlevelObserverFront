@@ -1,4 +1,4 @@
-import { calculateEMA } from '@/shared/lib/calculateEMA';
+import { calculateEMA } from '@/shared';
 import type { ChartDataNode, TopicDataItem } from '@/shared/types/types';
 
 /**

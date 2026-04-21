@@ -1,7 +1,7 @@
 import { Box, VStack, Flex, Heading, Spacer } from "@chakra-ui/react";
 import { Menu, BarChart3, Plus, PanelLeftClose, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence, type Transition } from "framer-motion";
-import { NavButton } from "@/widgets/sidebar/ui/NavButton";
+import { NavButton } from "@/widgets";
 import type { SidebarProps } from "@/shared/types/types";
 import { useColorMode } from "../../../shared/ui/color-mode";
 

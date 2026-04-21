@@ -2,7 +2,7 @@ import { Marker, Popup, GeoJSON, Tooltip, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type { MapProps } from "@/shared/types/types";
-import { RecenterMap } from "@/shared/lib/mapUtils";
+import { RecenterMap } from "@/shared";
 import { lazy } from "react";
 import L from 'leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -16,7 +16,7 @@ const TileLayer = lazy(() =>
   import("react-leaflet").then((module) => ({ default: module.TileLayer }))
 );
 
-L.Icon.Default.mergeOptions({
+L.Icon.mergeOptions({
     iconRetinaUrl: markerIcon2x,
     iconUrl: markerIcon,
     shadowUrl: markerShadow,
@@ -33,7 +33,7 @@ function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number
 
 
 
-export default function Map({ selectedTopicId, topics, onMapClick, isAdding, mergedGeoJSON }: MapProps) {
+export function Map({ selectedTopicId, topics, onMapClick, isAdding, mergedGeoJSON }: MapProps) {
     const currentTopicInfo = topics.find(t => t.id_topic === selectedTopicId);
 
     return (

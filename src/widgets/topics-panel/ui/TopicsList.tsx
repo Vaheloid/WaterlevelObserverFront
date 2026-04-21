@@ -2,11 +2,11 @@ import { Box, Flex, Spinner, VStack, Center, HStack, Badge, Heading, Grid } from
 import { FiDatabase } from 'react-icons/fi';
 import { useState } from 'react';
 import type { TopicsListProps, Topic } from '@/shared/types/types';
-import { TopicCard } from '@/entities/topic/ui/TopicCard';
-import { TopicDeleteDialog } from '@/features/delete-topic/ui/TopicDeleteDialog';
+import { TopicCard } from '@/entities';
+import { TopicDeleteDialog } from '@/features';
 
 
-export default function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading, isSelectionDisabled }: TopicsListProps & { isSelectionDisabled: boolean }) {
+export function TopicsList({ onTopicSelect, onTopicDelete, selectedTopicId, topics, loading, isSelectionDisabled }: TopicsListProps & { isSelectionDisabled: boolean }) {
     const [topicToDelete, setTopicToDelete] = useState<Topic | null>(null);
 
     const handleTopicClick = (topic: Topic) => {

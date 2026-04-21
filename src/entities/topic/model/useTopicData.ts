@@ -1,7 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchTopicData, fetchTopicPoints } from '@/shared/api/api'; 
-import { processCoordinatesToHull } from '@/shared/lib/geoUtils';
-import { chartUtils } from '@/shared/lib/chartUtils';
+import { fetchTopicData, fetchTopicPoints, processCoordinatesToHull, chartUtils } from '@/shared'; 
 import type { ChartDataNode, TopicDataResponse } from '@/shared/types/types';
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 

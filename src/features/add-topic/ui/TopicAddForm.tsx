@@ -1,4 +1,4 @@
-import { addTopic } from "@/shared/api/api";
+import { addTopic } from "@/shared";
 import type { Topic, TopicAddFormProps } from "@/shared/types/types";
 import { VStack, Input, Button, Field, HStack } from "@chakra-ui/react"
 import { useEffect } from "react";
