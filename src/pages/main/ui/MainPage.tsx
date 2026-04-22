@@ -15,8 +15,10 @@ export default function MainPage() {
     const [isChartVisible, setIsChartVisible] = useState(false)
     const [clickedCoords, setClickedCoords] = useState<{lat: number, lng: number} | null>(null);
     const [isSelectionDisabled, setIsSelectionDisabled] = useState(false); // НОВОЕ
+    // 1. Новое состояние для режима полигонов
+    const [polygonMode, setPolygonMode] = useState<"hull" | "square">("hull");
     const { topics, loading, loadData } = useTopics(activePanel === "topics")
-    const { chartData, mergedGeoJSON, } = useTopicData(selectedTopicId);
+    const { chartData, mergedGeoJSON, } = useTopicData(selectedTopicId, polygonMode);
 
     const handleMapClick = (lat: number, lng: number) => {
         if (activePanel === "add") {
@@ -96,6 +98,8 @@ export default function MainPage() {
                 onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
                 activePanel={activePanel}
                 onPanelToggle={handlePanelToggle}
+                polygonMode={polygonMode}
+                onPolygonModeToggle={() => setPolygonMode(prev => prev === "hull" ? "square" : "hull")}
             />
 
             <Flex direction="column" flex="1" position="relative">

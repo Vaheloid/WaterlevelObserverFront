@@ -12,6 +12,11 @@ export const loginUser = async (data: FormValues): Promise<LoginResponse> => {
     return response.data;
 };
 
+export const logoutUser = async (data: FormValues): Promise<LoginResponse> => {
+    const response = await api.post('/auth/logout', data);
+    return response.data;
+};
+
 export const fetchTopics = async (): Promise<Topic[]> => {
     const response = await api.get<Topic[]>('/data/topics');
     return response.data;

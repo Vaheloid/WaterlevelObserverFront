@@ -29,11 +29,31 @@ export const TopicDeleteDialog = ({ topic, onClose, onConfirm }: DeleteDialogPro
                     </Dialog.Body>
                     <Dialog.Footer>
                         <Dialog.ActionTrigger asChild>
-                            <Button bg={{ base: "white", _dark: "whiteAlpha.200" }} color={{ base: "black", _dark: "white" }} borderRadius="12px">
+                            <Button 
+                                bg={{ base: "white", _dark: "whiteAlpha.200" }} 
+                                color={{ base: "black", _dark: "white" }} 
+                                borderRadius="12px"
+                                border="none"
+                                _focus={{ boxShadow: 'none' }}
+                                _focusVisible={{ boxShadow: 'none', outline: 'none' }}
+                                _hover={{ 
+                                    bg: { base: "gray.200", _dark: "whiteAlpha.300" } 
+                                }}>
                                 Отмена
                             </Button>
                         </Dialog.ActionTrigger>
-                        <Button colorPalette="red" onClick={onConfirm} borderRadius="12px">
+                        <Button 
+                            bg={{ base: "red.600", _dark: "red" }} 
+                            color={{ base: "white", _dark: "white" }} 
+                            onClick={onConfirm} 
+                            borderRadius="12px"
+                            border="none"
+                            _focus={{ boxShadow: 'none' }}
+                            _focusVisible={{ boxShadow: 'none', outline: 'none' }}
+                            _hover={{ 
+                                bg: { base: "red.500", _dark: "red.500" } 
+                            }}
+                            >
                             Удалить
                         </Button>
                     </Dialog.Footer>

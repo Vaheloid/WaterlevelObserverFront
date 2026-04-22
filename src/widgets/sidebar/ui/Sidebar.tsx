@@ -1,11 +1,12 @@
 import { Box, VStack, Flex, Heading, Spacer } from "@chakra-ui/react";
-import { Menu, BarChart3, Plus, PanelLeftClose, Sun, Moon } from "lucide-react";
+import { Menu, BarChart3, Plus, PanelLeftClose, Sun, Moon, LogOut, Hexagon, Circle } from "lucide-react";
 import { motion, AnimatePresence, type Transition } from "framer-motion";
 import { NavButton } from "@/widgets";
-import type { SidebarProps } from "@/shared/types/types";
+import type { FormValues, SidebarProps } from "@/shared/types/types";
 import { useColorMode } from "../../../shared/ui/color-mode";
+import { logoutUser } from "@/shared";
 
-export const Sidebar = ({ isOpen, onToggle, activePanel, onPanelToggle }: SidebarProps) => {
+export const Sidebar = ({ isOpen, onToggle, activePanel, onPanelToggle, polygonMode, onPolygonModeToggle}: SidebarProps) => {
     const { colorMode, toggleColorMode } = useColorMode();
     const iconColor = { base: "gray.800", _dark: "white" };
 
@@ -14,6 +15,42 @@ export const Sidebar = ({ isOpen, onToggle, activePanel, onPanelToggle }: Sideba
         ease: "easeInOut",
         duration: 0.3,
     };
+
+    const Logout = async () => {
+    try {
+        // 1. Вызываем запрос к бэкенду. 
+        // Если для логаута не нужны данные (FormValues), 
+        // убедитесь, что бэкенд их не требует. 
+        // Если требует пустой объект, передаем {} как FormValues.
+        await logoutUser({ login_user: "", password_user: "" } as FormValues);
+        
+    } catch (error) {
+        // Логируем ошибку, но все равно продолжаем процесс выхода на фронте
+        console.error("Ошибка при запросе на логаут:", error);
+    } finally {
+        // Эти действия выполняем в любом случае (даже если сервер вернул ошибку),
+        // чтобы пользователь не "застрял" в приложении.
+
+        // Функция удаления конкретной куки
+        const deleteCookie = (name: string) => {
+            const paths = [window.location.pathname, "/", ""];
+            paths.forEach(path => {
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}`;
+            });
+        };
+
+        // 2. Удаляем токены из кук (на случай, если бэкенд не прислал Set-Cookie)
+        deleteCookie('refresh_token');
+        deleteCookie('WaterlevelSystemSession');
+
+        // 3. Чистим локальные хранилища
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // 4. Редирект на логин
+        window.location.href = "/login";
+    }
+};
 
     return (
         <motion.aside
@@ -95,13 +132,32 @@ export const Sidebar = ({ isOpen, onToggle, activePanel, onPanelToggle }: Sideba
 
                     <Spacer />
                             
-                    <NavButton
-                        icon={colorMode === "light" ? <Moon size={24} color="currentColor" /> : <Sun size={24} color="currentColor" />}
-                        color={iconColor}
-                        label={colorMode === "light" ? "Темная тема" : "Светлая тема"}
-                        isExpanded={isOpen}
-                        onClick={toggleColorMode}
-                    />
+                    {/* Кнопки в нижней части */}
+                    <VStack w="full" gap={2} align={isOpen ? "stretch" : "center"}>
+                        {/* НОВАЯ КНОПКА ПЕРЕКЛЮЧЕНИЯ РЕЖИМА */}
+                        <NavButton
+                            icon={polygonMode === "hull" ? <Hexagon size={24} /> : <Circle size={24} />}
+                            color={iconColor}
+                            label={polygonMode === "hull" ? "Режим: Полигон" : "Режим: Круги"}
+                            isExpanded={isOpen}
+                            onClick={onPolygonModeToggle}
+                        />
+                        <NavButton
+                            icon={colorMode === "light" ? <Moon size={24} color="currentColor" /> : <Sun size={24} color="currentColor" />}
+                            color={iconColor}
+                            label={colorMode === "light" ? "Темная тема" : "Светлая тема"}
+                            isExpanded={isOpen}
+                            onClick={toggleColorMode}
+                        />
+
+                        <NavButton
+                            icon={<LogOut size={24} color="currentColor" />}
+                            color={{ base: "black", _dark: "white" }} // Выделим красным для акцента на выходе
+                            label="Выйти"
+                            isExpanded={isOpen}
+                            onClick={Logout}
+                        />
+                    </VStack>
                 </VStack>
             </Box>
         </motion.aside>

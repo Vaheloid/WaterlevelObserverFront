@@ -140,6 +140,8 @@ export interface SidebarProps {
     onToggle: () => void;
     activePanel: string | null;
     onPanelToggle: (panel: "topics" | "add") => void;
+    polygonMode: "hull" | "square"; 
+    onPolygonModeToggle: () => void;
 }
 
 export type DataPoint = TopicDataItem;

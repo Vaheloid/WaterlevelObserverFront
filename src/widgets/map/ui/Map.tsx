@@ -16,11 +16,19 @@ const TileLayer = lazy(() =>
   import("react-leaflet").then((module) => ({ default: module.TileLayer }))
 );
 
-L.Icon.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
+// Создаем экземпляр дефолтной иконки вручную
+const DefaultIcon = L.icon({
     iconUrl: markerIcon,
+    iconRetinaUrl: markerIcon2x,
     shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
 });
+
+// Устанавливаем ее как стандартную для всех маркеров
+L.Marker.prototype.options.icon = DefaultIcon;
 
 function MapClickHandler({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
     useMapEvents({
@@ -74,7 +82,7 @@ export function Map({ selectedTopicId, topics, onMapClick, isAdding, mergedGeoJS
 
             {/* Маркер */}
             {topics && topics.length > 0 && topics.map((topic) => (
-                <Marker key={topic.id_topic} position={[topic.latitude_topic, topic.longitude_topic]}>
+                <Marker key={topic.id_topic} position={[topic.latitude_topic, topic.longitude_topic]} icon={DefaultIcon}>
                     <Popup>{topic.name_topic}</Popup>
                     <Tooltip>
                         {topic.name_topic}

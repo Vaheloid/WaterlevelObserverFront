@@ -2,38 +2,81 @@ import * as turf from "@turf/turf";
 import type { Feature, Polygon, MultiPolygon } from 'geojson';
 
 /**
- * Превращает сырые координаты из БД в сглаженный полигон GeoJSON
+ * РЕЖИМ 1: Сглаженный вогнутый полигон (Hull)
+ * Использует вашу логику с concave для заполнения пустот между точками
  */
 export const processCoordinatesToHull = (allPoints: unknown): Feature<Polygon | MultiPolygon> | null => {
     try {
-        // 1. Проверяем, что это действительно массив
-        if (!Array.isArray(allPoints)) {
-            console.error("processCoordinatesToHull: Ожидался массив, получено:", typeof allPoints, allPoints);
-            return null;
+        if (!Array.isArray(allPoints) || allPoints.length === 0) return null;
+
+        // Быстрая нормализация координат
+        const coords: number[][] = [];
+        for (const p of allPoints) {
+            if (Array.isArray(p) && p.length >= 2) {
+                // Turf использует [lng, lat], меняем местами если на входе [lat, lng]
+                coords.push([Number(p[1]), Number(p[0])]);
+            }
         }
 
-        // 2. Проверка на пустоту
-        if (allPoints.length === 0) return null;
+        if (coords.length === 0) return null;
+
+        // 1. Создаем MultiPoint вместо массива отдельных Point
+        const multiPoint = turf.multiPoint(coords);
+
+        // 2. Буферизируем ВЕСЬ MultiPoint сразу. 
+        // Turf объединит пересекающиеся круги автоматически. Это быстрее чем union в цикле.
+        const merged = turf.buffer(multiPoint, 0.15, { units: 'kilometers', steps: 4 });
+
+        if (!merged) return null;
+
+        // 3. "Сдуваем" результат (ваш алгоритм сохранения перемычек)
+        const slimmed = turf.buffer(merged, -0.07, { units: 'kilometers', steps: 4 });
+
+        if (!slimmed) return null;
+
+        // 4. Упрощаем и обрезаем точность
+        const simplified = turf.simplify(slimmed, { tolerance: 0.00005, highQuality: false });
         
-        // 3. Создаем точки (проверяем, что каждый элемент - массив координат)
-        const points = allPoints
-            .filter(p => Array.isArray(p) && p.length >= 2) // Доп. защита от битых данных
-            .map(p => turf.point([Number(p[1]), Number(p[0])]));
-
-        if (points.length === 0) return null;
-
-        const collection = turf.featureCollection(points);
-        
-        // Далее ваш код без изменений...
-        const concaveHull = turf.concave(collection, { maxEdge: 0.4, units: 'kilometers' });
-        if (!concaveHull) return null;
-
-        const simplified = turf.simplify(concaveHull, { tolerance: 0.0001, highQuality: true });
-        const buffered = turf.buffer(simplified, 0.05, { units: 'kilometers', steps: 8 });
-
-        return turf.truncate(buffered!, { precision: 6 }) as Feature<Polygon | MultiPolygon>;
+        return turf.truncate(simplified as Feature<Polygon | MultiPolygon>, { precision: 6 });
     } catch (error) {
-        console.error("Ошибка внутри processCoordinatesToHull:", error);
+        console.error("Ошибка в SlimNetwork:", error);
+        return null;
+    }
+};
+
+/**
+ * РЕЖИМ 2: Отображение отдельными кругами
+ * Оптимизировано через combine, чтобы избежать зависаний
+ */
+export const processCoordinatesToSquares = (
+    allPoints: unknown
+): Feature<Polygon | MultiPolygon> | null => {
+    try {
+        if (!Array.isArray(allPoints) || allPoints.length === 0) return null;
+
+        // 1. Быстро создаем массив буферов
+        const pointZones = allPoints
+            .filter(p => Array.isArray(p) && p.length >= 2)
+            .map(p => {
+                const pt = turf.point([Number(p[1]), Number(p[0])]);
+                return turf.buffer(pt, 0.1, { units: 'kilometers' });
+            })
+            .filter(Boolean) as Feature<Polygon>[];
+
+        if (pointZones.length === 0) return null;
+
+        // 2. Вместо цикла используем combine + flatten. 
+        // Это превращает массив полигонов в один MultiPolygon мгновенно.
+        const collection = turf.featureCollection(pointZones);
+        const combined = turf.combine(collection);
+        
+        // 3. Чтобы полигоны "слились" визуально без внутренних границ, 
+        // используем flatten. Если нужно именно математическое слияние,
+        // можно добавить turf.union(combined.features[0]), но для отрисовки combine обычно достаточно.
+        
+        return turf.truncate(combined.features[0] as Feature<MultiPolygon>, { precision: 6 });
+    } catch (error) {
+        console.error("Ошибка в оптимизированном processCoordinatesToHull:", error);
         return null;
     }
 };

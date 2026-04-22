@@ -1,6 +1,5 @@
 import { Box, Heading, Text, Center, Stack } from "@chakra-ui/react"
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useForm } from "react-hook-form"
 import type { FormValues } from "@/shared/types/types"
 import { loginUser } from "@/shared"
@@ -8,7 +7,6 @@ import { LoginForm, LoginLayout } from "@/features"
 
 
 export default function Login() {
-	const navigate = useNavigate()
 	const [isSubmitting, setIsSubmitting] = useState(false)
 	const [loginError, setLoginError] = useState<string | null>(null)
 	const { reset } = useForm<FormValues>()
@@ -19,7 +17,7 @@ export default function Login() {
 
 		try {
 			await loginUser(data)
-			navigate("/main")
+			window.location.href = './mainpage.html';
 			reset()
 		} 
 		catch {

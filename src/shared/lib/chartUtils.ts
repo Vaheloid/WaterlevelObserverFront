@@ -63,6 +63,5 @@ export function chartUtils(data: TopicDataItem[]): ChartDataNode[] {
         };
     });
 
-    console.log("График сформирован по текущим данным топика: ", chartDataWithEMA);
     return chartDataWithEMA;
 }
