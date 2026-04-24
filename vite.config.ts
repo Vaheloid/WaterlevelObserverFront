@@ -52,7 +52,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: config.API_URL,
+        target: config.API_HOST + ":" + config.API_PORT,
         changeOrigin: true,
         secure: false,
       }

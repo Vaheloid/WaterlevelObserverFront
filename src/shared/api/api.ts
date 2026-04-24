@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Topic, FormValues, LoginResponse, TopicDeleteProps, TopicDataResponse, TopicPointsResponse } from "@/shared/types/types";
+import type { Topic, FormValues, LoginResponse, TopicDeleteProps, TopicDataResponse, TopicPointsResponse, PredictionItem, EMAItem } from "@/shared/types/types";
 
 const api = axios.create({
     baseURL: '/api-mqtt',
@@ -29,6 +29,17 @@ export const fetchTopicData = async (id: number): Promise<TopicDataResponse> => 
 
 export const fetchTopicPoints = async (id: number): Promise<TopicPointsResponse> => {
     const response = await api.get<TopicPointsResponse>(`/data/topics/${id}/points`);
+    return response.data;
+};
+
+
+export const fetchTopicEma = async (id: number): Promise<EMAItem[]> => {
+    const response = await api.get<EMAItem[]>(`/data/topics/${id}/ema`);
+    return response.data;
+};
+
+export const fetchTopicPrediction = async (id: number): Promise<PredictionItem[]> => {
+    const response = await api.get<PredictionItem[]>(`/data/topics/${id}/prediction`);
     return response.data;
 };
 

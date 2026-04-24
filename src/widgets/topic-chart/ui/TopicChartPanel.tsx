@@ -15,6 +15,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
     const gridStroke = useColorModeValue("#e6e6e6", "rgba(255, 255, 255, 0.1)");
     const LineFactGridStroke = useColorModeValue("#2B6CB0", "#016ada");
     const LineAvgGridStroke = useColorModeValue("#38A169", "#32c579");
+    const LinePredictGridStroke = useColorModeValue("#ff4444", "#ff0000");
 
     useLayoutEffect(() => {
         if (!containerRef.current) return;
@@ -37,6 +38,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
         series: [
             { name: "value", label: "Фактическое значение", color: LineFactGridStroke },
             { name: "ema", label: "Средняя скользящая", color: LineAvgGridStroke },
+            { name: "prediction", label: "Прогноз", color: LinePredictGridStroke }, // Новый цвет
         ],
     });
     
@@ -178,7 +180,7 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                                             const dataNode = chartData[index];
                                             return dataNode ? dataNode.displayTime : tick;
                                         }}
-                                        dataKey="time" 
+                                        dataKey="displayTime" 
                                         axisLine={false} 
                                         tick={{ fontSize: 10 }} 
                                         angle={-30} 
@@ -199,14 +201,17 @@ export const TopicChartPanel = ({ topic, chartData, isListOpen, isSidebarOpen }:
                                     {chart.series.map((item) => (
                                         <Line
                                             key={item.name}
-                                            type="natural"
+                                            type="monotone"
                                             dataKey={item.name}
                                             stroke={chart.color(item.color)}
                                             strokeWidth={2}
+                                            // Точки рисуем только для реальных данных
                                             dot={item.name === "value" ? { r: 3 } : false}
-                                            strokeDasharray={item.name === "ema" ? "5 5" : undefined}
+                                            // EMA и Прогноз делаем пунктирными для отличия
+                                            strokeDasharray={item.name === "ema" ? "5 5" : item.name === "prediction" ? "5 5" : undefined}
                                             opacity={chart.getSeriesOpacity(item.name)}
                                             isAnimationActive={true}
+                                            connectNulls={true} // Важно, чтобы линии не прерывались, если данных в какой-то точке нет
                                         />
                                     ))}
                                 </LineChart>

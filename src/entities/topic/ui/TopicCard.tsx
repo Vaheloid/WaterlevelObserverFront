@@ -116,7 +116,7 @@ export const TopicCard = ({ topic, isSelected, isSelectionDisabled, onSelect, on
                 color={{ base: "gray.600", _dark: "whiteAlpha.900" }}
                 transition="all 0.3s ease"
                 disabled={isSelectionDisabled} 
-                _hover={!isSelectionDisabled ? { bg: "red.50", color: "red.600", transform: "scale(1.02)" } : {}}
+                _hover={!isSelectionDisabled ? { bg: { base: "red.50", _dark: "whiteAlpha.300" }, color: "red.600", transform: "scale(1.02)" } : {}}
                 _focus={{ outline: "none", boxShadow: "none" }}
                 onClick={(e) => {
                     e.stopPropagation();

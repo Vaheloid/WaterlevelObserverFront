@@ -59,7 +59,7 @@ export const processCoordinatesToSquares = (
             .filter(p => Array.isArray(p) && p.length >= 2)
             .map(p => {
                 const pt = turf.point([Number(p[1]), Number(p[0])]);
-                return turf.buffer(pt, 0.1, { units: 'kilometers' });
+                return turf.buffer(pt, 0.08, { units: 'kilometers' });
             })
             .filter(Boolean) as Feature<Polygon>[];
 

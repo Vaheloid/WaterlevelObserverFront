@@ -79,9 +79,9 @@ export interface TopicFullState {
 
 export interface ChartDataNode {
     displayTime: string;
-    time: string;
     value: number | null;
     ema: number | null;
+    prediction: number | null;
 }
 
 export interface TopicsPanelProps {
@@ -99,6 +99,18 @@ export interface TopicDataItem {
     id_data: number;
     value_data: string;
     time_data: number;
+}
+
+export interface EMAItem {
+    id_ema: number;
+    value_ema: string; // приходит строкой
+    time_ema: string;  // приходит ISO датой
+}
+
+export interface PredictionItem {
+    id_prediction: number;
+    value_prediction: string;
+    time_prediction: string;
 }
 
 /**
